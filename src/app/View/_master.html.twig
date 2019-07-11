@@ -1,0 +1,25 @@
+<head>
+	<title>{{ page_title }} - WordPress Development Sites</title>
+	<link rel="stylesheet" href="vendor/twbs/bootstrap/dist/css/bootstrap.min.css">
+	<style>
+		.wrap {
+			margin: 20px!important;
+		}
+		pre.log {
+			box-shadow: 0 1px 1px rgba(0,0,0,0.04);
+			border: 1px solid #e5e5e5;
+			background: #fff;
+		}
+		.optiondelete {
+			color: #a00;
+		}
+		.optiondelete:hover {
+			color: #dc3232;
+			border: none;
+		}
+	</style>
+	{% block head %} {% endblock %}
+	</head>
+	<body>
+		{% block content %}{% endblock %}
+	</body>

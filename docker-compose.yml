@@ -1,0 +1,48 @@
+version: '3.6'
+services:
+  wpgen_mail:
+    image: mailhog/mailhog:latest
+    ports:
+     - 58002:1025
+     - 58001:8025
+  wpgen_db_pma:
+    depends_on:
+     - wpgen_db
+    image: phpmyadmin/phpmyadmin:latest
+    ports:
+     - 58003:80
+    environment:
+      PMA_HOST: wpgen_db
+      PMA_USER: root
+      PMA_PASSWORD: f8s9798739848789sd6
+  wpgen_db:
+    image: mysql:latest
+    command: --default-authentication-plugin=mysql_native_password
+    ports:
+    - 58100:3306
+    environment:
+      MYSQL_DATABASE: wp_generator
+      MYSQL_ROOT_PASSWORD: f8s9798739848789sd6
+    volumes:
+    - "./docker/mysql:/docker-entrypoint-initdb.d"
+  wpgen_www:
+    depends_on:
+    - wpgen_db
+    build:
+      context: ./docker
+      dockerfile: Dockerfile
+    volumes:
+    - "./src:/var/www/html"
+    environment:
+      GN_DOMAIN: localhost:58000
+      DB_HOST: host.docker.internal
+      DB_DATABASE: wp_generator
+      DB_PORT: 58100
+      DB_USER: root
+      DB_PASSWORD: f8s9798739848789sd6
+      MAIL_ON: 1
+      MAIL_ADDR: mailer@example.com
+      MAIL_SMTP: host.docker.internal
+      MAIL_PORT: 58002
+    ports:
+    - 58000:80

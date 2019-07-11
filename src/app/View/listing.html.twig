@@ -1,0 +1,84 @@
+{% extends "_master.html.twig" %}
+
+{% block content %}
+<div class="container">
+	<div class="row">
+		<div class="col-md-12">
+			<div>
+				<h1>WordPress Development Sites</h1>
+				<p>Disposable WordPress installs to test plugins, themes and content types without detrimental affect. </p>
+				<p>All sites start with a 60 day expiry, so ensure you backup or extend your container as long as it is needed. <b>Do not leave anything important in these installs</b>.</p>
+			</div>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-md-12">
+			<h2>Current Sites</h2>
+			{% include 'Segments/form.html.twig' %}
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-md-12">
+			<p>
+				<a class="btn btn-info" href="index.php?control=log" title="PHP {{ versions.php }}, {{ versions.wpcli }}">System log</a>
+			</p>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-md-12">
+			<table class='table table-striped table-bordered'>
+				<thead>
+					<tr>
+						<th>Purpose</th>
+						<th>Link</th>
+						<th style="width:10%;">Version</th>
+						<th style="width:10%;">Remaining</th>
+						<th>Options</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% if listings|length > 0 %}
+						{% for listing in listings %}
+							<tr>
+								<td class='sitetable name'>
+									{{ listing.name|raw }}
+									{% if listing.dbExists == false %} - <span style="color:#d68a00;font-style:italic" title="Abnormal configuration, or setup is unfinished.">Missing Database</span>{% endif %}
+								</td>
+								<td class='sitetable url'><a href='{{ listing.urls.site }}'>{{ listing.urls.site }}</a></td>
+								<td class='sitetable version'>{{ listing.version|default('Unknown') }}</td>
+								{% if listing.daysRemain < 5 %}
+								<td class='sitetable time'><span style='color:red'><strong>{{listing.daysRemain}}</strong> days</span></td>
+								{% else %}
+								<td class='sitetable time'><strong>{{listing.daysRemain}}</strong> days</td>
+								{% endif %}
+								<td class='sitetable options'>
+									<a class='btn btn-sm btn-danger' onclick="return confirm('Are you sure?')" href='{{ listing.urls.delete }}'>Delete</a>
+									<a class='btn btn-sm btn-primary' href='{{ listing.urls.export }}'>Export</a>
+									<a class='btn btn-sm btn-info' href='{{ listing.urls.extend }}'>Extend</a>
+									<a class='btn btn-sm btn-info' href='{{ listing.urls.log }}'>Log</a>
+								</td>
+							</tr>
+						{% endfor %}
+					{% else %}
+						<tr>
+							<td colspan=5><em>No visible entries in the system.</em></td>
+						</tr>
+					{% endif %}
+				</tbody>
+				<tfoot>
+					<tr>
+						<th>Purpose</th>
+						<th>Link</th>
+						<th>Version</th>
+						<th>Remaining</th>
+						<th>Options</th>
+					</tr>
+				</tfoot>
+			</table>
+		</div>
+	</div>
+</div>
+{% endblock %}

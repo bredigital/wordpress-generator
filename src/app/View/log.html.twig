@@ -1,0 +1,18 @@
+{% extends "_master.html.twig" %}
+
+{% block content %}
+<div class="container">
+	<div class="row">
+		<div class="col-md-12">
+			<h1>{{ log_header }}</h1>
+			<p>
+				<a class="btn btn-info" href="//{{ return_url }}">Return</a>
+				{% if show_exluder %}
+				<a class="btn btn-info" href="//{{ return_url }}/index.php?control=log&excludeinfo">Hide Info</a>
+				{% endif %}
+			</p>
+			<pre class='pre-scrollable'>{{ log_contents }}</pre>
+		</div>
+	</div>
+</div>
+{% endblock %}
