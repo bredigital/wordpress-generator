@@ -2,6 +2,8 @@
 One-click generation of WordPress sites, for quick spin-up development and
 testing without configuration. All through the power of [WP-CLI][wp]!
 
+![Screenshot of the application](https://user-images.githubusercontent.com/44401434/61215275-49b6ca00-a702-11e9-84a1-adcdd4987387.png)
+
 This is intended for internal classic hosting. **This is not production-ready
 software.**
 
