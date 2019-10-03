@@ -4,6 +4,11 @@ Adheres to [Keep a Changelog][KC], and [Semantic Versioning][SV].
 This has been migrated from Subversion to Git(Hub). Versions prior to 1.0b are
 no longer available.
 
+## Unreleased
+### Changed
+- Mail from and name are passed to WordPress sites via generator plugin.
+- Adjustment to verbosity of email error logging.
+
 ## [1.0b] - 2019-07-11
 ### Changed
 - WordPress theme files dropped in favour of bootstrap.
