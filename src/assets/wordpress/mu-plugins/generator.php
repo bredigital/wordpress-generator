@@ -34,6 +34,14 @@ if ( file_exists( $comp_path ) && ! empty( $table ) ) {
 
 		$phpmailer->IsSMTP();
 	});
+	
+	add_filter( 'wp_mail_from', function( $original ) use ( $config ) {
+		return $config->mail->fromAddress;
+	});
+
+	add_filter( 'wp_mail_from_name', function( $original ) use ( $config ) {
+		return $config->mail->fromName;
+	});
 
 	add_action( 'admin_bar_menu', function( $admin_bar ) use ( $config ) {
 		global $wpdb;
