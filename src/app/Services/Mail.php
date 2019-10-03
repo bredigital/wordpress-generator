@@ -48,8 +48,7 @@ class Mail {
 				$mail->SMTPAuth   = $this->config->mail->auth;
 				$mail->Username   = $this->config->mail->user;
 				$mail->Password   = $this->config->mail->password;
-				$mail->SMTPSecure = $this->config->mail->useSSL;
-				$mail->Port       = (int) $this->config->mail->Port;
+				$mail->Port       = $this->config->mail->Port;
 
 				$mail->setFrom( $this->config->mail->fromAddress, $this->config->mail->fromName );
 				$mail->addAddress( $details['user_email'], $details['user_nicename'] );
@@ -71,6 +70,7 @@ class Mail {
 					];
 				}
 
+				$mail->SMTPDebug = 2;
 				$mail->isSMTP();
 				$mail->send();
 			} catch ( Exception $e ) {
