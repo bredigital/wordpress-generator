@@ -74,7 +74,36 @@ class Listing extends Controls {
 					'php'   => phpversion(),
 					'wpcli' => $this->com->wpcli_version(),
 				],
+				'banner'        => $this->showBannerMessage(),
 			]
 		);
+	}
+
+	private function showBannerMessage() {
+		$dir = $this->config->directories->rootpath;
+		if ( $this->fs->exists( "{$dir}/problem.txt" ) ) {
+			return [
+				'type'    => 'problem',
+				'message' => file_get_contents( "{$dir}/problem.txt" ),
+			];
+		}
+
+		$dir = $this->config->directories->rootpath;
+		if ( $this->fs->exists( "{$dir}/warning.txt" ) ) {
+			return [
+				'type'    => 'warning',
+				'message' => file_get_contents( "{$dir}/warning.txt" ),
+			];
+		}
+
+		$dir = $this->config->directories->rootpath;
+		if ( $this->fs->exists( "{$dir}/info.txt" ) ) {
+			return [
+				'type'    => 'info',
+				'message' => file_get_contents( "{$dir}/info.txt" ),
+			];
+		}
+
+		return null;
 	}
 }

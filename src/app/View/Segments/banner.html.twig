@@ -1,0 +1,15 @@
+{% if banner is defined %}
+	{% if banner.type == 'problem' %}
+	<div class="alert alert-danger" role="alert">
+	{{ banner.message }}
+	</div>
+	{% elseif banner.type == 'warning' %}
+	<div class="alert alert-warning" role="alert">
+	{{ banner.message }}
+	</div>
+	{% elseif banner.type == 'info' %}
+	<div class="alert alert-info" role="alert">
+	{{ banner.message }}
+	</div>
+	{% endif %}
+{% endif %}

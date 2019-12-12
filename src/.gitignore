@@ -6,3 +6,6 @@ vendor/
 error.log
 assets/exports/dbdump*
 assets/exports/export-site*
+problem.txt
+warning.txt
+info.txt
