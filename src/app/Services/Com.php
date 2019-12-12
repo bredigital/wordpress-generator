@@ -27,11 +27,16 @@ class Com {
 		$this->wp = ( $this->config->general->system_wp ) ? 'wp' : realpath( $this->config->directories->rootpath . '/vendor/wp-cli/wp-cli/bin/wp' );
 	}
 
-	public function wpcli_call( $command, $directory, $link = null, $log = true ) {
+	public function wpcli_call( $command, $directory, $link = null, $log = true, $return_command = false ) {
 		$path = '--path=' . realpath( $directory );
 		$url  = ( isset( $link ) ) ? '--url=' . $link : null;
+		$com  = "{$this->wp} {$command} {$url} {$path} --allow-root";
 
-		$response = shell_exec( "{$this->wp} {$command} {$url} {$path} --allow-root" );
+		if ( $return_command ) {
+			return $com;
+		}
+
+		$response = shell_exec( $com );
 
 		if ( $log ) {
 			$this->log->info( 'WP-CLI responded with: ' . $response );
@@ -41,10 +46,16 @@ class Com {
 	}
 
 	public function wpcli_exportdb( $dloc, $directory, $link = null, $log = true ) {
-		$path = '--path=' . realpath( $directory );
+		$subcom = $this->wpcli_call(
+			"db tables --all-tables-with-prefix --format=csv",
+			$directory,
+			$link,
+			$log,
+			true
+		);
 
 		return $this->wpcli_call(
-			"db export {$dloc} --tables=$({$this->wp} db tables {$path} --allow-root --all-tables-with-prefix --format=csv)",
+			"db export {$dloc} --tables=$({$subcom})",
 			$directory,
 			$link,
 			$log

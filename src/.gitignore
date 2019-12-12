@@ -4,3 +4,5 @@
 vendor/
 .env
 error.log
+assets/exports/dbdump*
+assets/exports/export-site*
