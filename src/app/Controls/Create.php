@@ -60,6 +60,7 @@ class Create extends Controls {
 		$ssl        = ( $useSSL ) ? 'https://' : 'http://';
 		$site_owner = ( empty( $email ) ) ? "no-reply@example.com" : $email;
 		$site_name  = ( empty( $name ) ) ? "Spinup {$id}" : $name;
+		$site_pswd  = $this->generatePassword();
 
 		$this->fs->mkdir( "{$id_dir}/" );
 		$path = realpath( $id_dir );
@@ -77,7 +78,7 @@ class Create extends Controls {
 			$this->com->wpcli_call( "config set {$name} {$val} --raw", $path, null, true );
 		}
 
-		$o = $this->com->wpcli_call( "core install --title=\"{$site_name}\" --admin_user=admin --admin_password=password --admin_email=\"{$site_owner}\" --skip-email", $path, $url );
+		$o = $this->com->wpcli_call( "core install --title=\"{$site_name}\" --admin_user=admin --admin_password=\"{$site_pswd}\" --admin_email=\"{$site_owner}\" --skip-email", $path, $url );
 
 		$this->com->wpcli_call( "option add _wp_generator_id \"{$id}\"" , $path, null, true );
 
@@ -92,7 +93,9 @@ class Create extends Controls {
 			$id,
 			"Site {$id} Has Been Created",
 			"<p>The following development website has been created:</p>
-			<p><a href='http://{$this->config->general->domain}/{$id}'>{$this->config->general->domain}/{$id}</a></p>
+			<p>Site: <a href='http://{$this->config->general->domain}/{$id}'>{$this->config->general->domain}/{$id}</a></p>
+			<p>Username: admin</p>
+			<p>Password: {$site_pswd}</p>
 			<p>You have 60 days from today before the site is deleted, however it can be extended on the homepage. You will be notified 5 days prior to the pending removal.</p>"
 		);
 
@@ -112,5 +115,23 @@ class Create extends Controls {
 		$this->db->setReminderStatus( $id, false );
 
 		header( "Location: http://{$this->config->general->domain}" );
-    }
+	}
+
+	/**
+	 * Generates a medium security password.
+	 *
+	 * @return string A randomly-generated password string.
+	 */
+	private function generatePassword() {
+		$range = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890$%£@.,~?!';
+		$pass  = [];
+		$al    = strlen( $range ) - 1;
+
+		for ( $i = 0; $i < 12; $i++ ) {
+			$n      = rand( 0, $al );
+			$pass[] = $range[ $n ];
+		}
+
+		return implode( $pass );
+	}
 }

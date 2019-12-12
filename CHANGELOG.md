@@ -5,6 +5,9 @@ This has been migrated from Subversion to Git(Hub). Versions prior to 1.0b are
 no longer available.
 
 ## Unreleased
+### Added
+- Password for the generated site is emailed to you (#5).
+
 ### Changed
 - Mail from and name are passed to WordPress sites via generator plugin.
 - [REVERTED] Adjustment to verbosity of email error logging.
