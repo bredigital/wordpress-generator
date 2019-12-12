@@ -34,7 +34,6 @@ services:
       GN_DOMAIN: localhost:58000
       DB_HOST: db
       DB_DATABASE: wp_generator
-      DB_PORT: 3306
       DB_USER: root
       DB_PASSWORD: f8s9798739848789sd6
       MAIL_ON: 1
