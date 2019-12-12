@@ -91,7 +91,7 @@ class Create extends Controls {
 
 		$this->mail->sendEmailToSiteOwner(
 			$id,
-			"Site {$id} Has Been Created",
+			"Site '{$site_name}' Has Been Created",
 			"<p>The following development website has been created:</p>
 			<p>Site: <a href='http://{$this->config->general->domain}/{$id}'>{$this->config->general->domain}/{$id}</a></p>
 			<p>Username: admin</p>

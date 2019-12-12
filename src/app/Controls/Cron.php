@@ -87,9 +87,12 @@ class Cron extends Controls {
 	 * @return void
 	 */
 	private function emailReminder( $id ) {
+		$site_info = $this->db->get( $id );
+		$name      = ( isset( $site_info['name'] ) ) ? $site_info['name'] : "Site {$id}";
+
 		$this->mail->sendEmailToSiteOwner(
 			$id,
-			"Site {$id} Expiry Warning",
+			"{$name} expiry warning",
 			"<p>The following website is close to expiry:</p>
 			<p><a href='http://{$this->config->general->domain}/{$id}'>{$this->config->general->domain}/{$id}</a></p>
 			<p>If you wish to keep this site, <a href='{$this->config->general->domain}'>please visit the generator</a> to extend your container or export it.</p>"

@@ -16,6 +16,16 @@ use Carbon\Carbon;
  * Communicates with the sitelog table, the only table created by and for this tool.
  */
 class Sitelog extends Models {
+	public function get( $site_id ) {
+		$stmt = $this->PDO_ALL->prepare(
+			"SELECT * FROM {$this->config->database->maintable} where id = ?"
+		);
+		$stmt->execute( [ $site_id ] );
+		$arr = $stmt->fetch();
+
+		return $arr;
+	}
+
 	public function getAll( $showDeleted = true ) {
 		if ( $showDeleted )
 			$stmt = $this->PDO_ALL->query( 'SELECT * FROM ' . $this->config->database->maintable );

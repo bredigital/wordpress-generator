@@ -43,6 +43,7 @@ class Delete extends Controls {
 	 * @return boolean
 	 */
 	public function deleteSite( $id, $cron = false ) {
+		$site_info = $this->db->get( $id );
 		$this->log->info( "Deletion started for site {$id}." );
 
 		$downloadable = "";
@@ -50,9 +51,10 @@ class Delete extends Controls {
 			$downloadable = "<p>A <a href='http://{$this->config->general->domain}/assets/exports/export-site-{$id}.zip'>downloadable backup of the deleted site</a> is available.</p>";
 		}
 
+		$name = ( isset( $site_info['name'] ) ) ? $site_info['name'] : "Site {$id}";
 		$this->mail->sendEmailToSiteOwner(
 			$id,
-			"Site {$id} Has Been Deleted",
+			"{$name} has been deleted",
 			"<p>The following website has been deleted (manually or automatically) from the WordPress generator:</p>
 			<p><a href='http://{$this->config->general->domain}/{$id}'>{$this->config->general->domain}/{$id}</a></p>
 			<p>If this was unexpected, please note that there is a 60 day timer on each site which requires manually extending if desired to stay longer.</p>
@@ -78,7 +80,7 @@ class Delete extends Controls {
 		if ( file_exists( "{$this->config->directories->rootpath}/wordpress/" ) ) {
 			try {
 				$this->fs->remove( [ "{$this->config->directories->rootpath}/wordpress/" ] );
-			} catch ( Exception $e ) {
+			} catch ( \Exception $e ) {
 				$this->log->error( 'An error occured during the delete.', $e->getMessage() );
 				return false;
 			}
