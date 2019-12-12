@@ -70,7 +70,6 @@ class Mail {
 					];
 				}
 
-				$mail->SMTPDebug = 2;
 				$mail->isSMTP();
 				$mail->send();
 			} catch ( Exception $e ) {
