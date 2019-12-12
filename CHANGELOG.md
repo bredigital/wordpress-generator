@@ -6,7 +6,7 @@ no longer available.
 
 ## Unreleased
 ### Added
-- Password for the generated site is emailed to you (#5).
+- Password for the generated site is emailed to you (#2).
 
 ### Changed
 - Mail from and name are passed to WordPress sites via generator plugin.
