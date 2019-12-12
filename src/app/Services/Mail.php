@@ -70,6 +70,14 @@ class Mail {
 					];
 				}
 
+				if( $this->config->general->debug ) {
+					$cob = $this->log;
+					$mail->SMTPDebug = 2;
+					$mail->Debugoutput = function( $str, $level ) use ( $cob ) {
+						$cob->debug( "Email  (L{$level}) : {$str}" );
+					};
+				}
+
 				$mail->isSMTP();
 				$mail->send();
 			} catch ( Exception $e ) {

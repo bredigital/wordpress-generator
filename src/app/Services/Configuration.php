@@ -41,7 +41,7 @@ class Configuration {
 	private function setGeneral() {
 		return [
 			'domain'       => $this->getEnv( 'GN_DOMAIN' ),
-			'debug'        => $this->getEnv( 'GN_DEBUG' ),
+			'debug'        => $this->getEnv( 'GN_DEBUG', false, 'boolean' ),
 			'sslAvailable' => $this->getEnv( 'GN_SSL_AVAILABLE', false, 'boolean' ),
 			'rootDir'      => __DIR__ . '/../..',
 			'system_wp'    => $this->getEnv( 'GN_SYSTEM_WPCLI', false, 'boolean' ),

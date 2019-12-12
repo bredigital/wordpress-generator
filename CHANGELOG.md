@@ -11,7 +11,7 @@ no longer available.
 
 ### Changed
 - Mail from and name are passed to WordPress sites via generator plugin.
-- [REVERTED] Adjustment to verbosity of email error logging.
+- Adjustment to verbosity of email error logging (if debug is enabled).
 
 ## [1.0b] - 2019-07-11
 ### Changed

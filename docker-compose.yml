@@ -32,6 +32,7 @@ services:
     - "./src:/var/www/html"
     environment:
       GN_DOMAIN: localhost:58000
+      GN_DEBUG: 1
       DB_HOST: db
       DB_DATABASE: wp_generator
       DB_USER: root
