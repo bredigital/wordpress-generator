@@ -14,6 +14,7 @@ use TWPG\Services\Configuration;
 use TWPG\Services\SystemLog;
 use TWPG\Services\Mail;
 use TWPG\Services\Com;
+use TWPG\Services\ViewRender;
 use TWPG\Models\Sitelog;
 
 use Symfony\Component\Filesystem\Filesystem;
@@ -28,14 +29,24 @@ class Create extends Controls {
 	protected $db;
 	protected $mail;
 	protected $com;
+	protected $view;
 
-	public function __construct( Configuration $config, Filesystem $fs, SystemLog $log, Sitelog $sitelog, Mail $mail, Com $com ) {
+	public function __construct(
+		Configuration $config,
+		Filesystem $fs,
+		SystemLog $log,
+		Sitelog $sitelog,
+		Mail $mail,
+		Com $com,
+		ViewRender $view
+		) {
 		$this->config = $config;
 		$this->fs     = $fs;
 		$this->log    = $log;
 		$this->db     = $sitelog;
 		$this->mail   = $mail;
 		$this->com    = $com;
+		$this->view   = $view;
 	}
 
 	/**
@@ -92,11 +103,15 @@ class Create extends Controls {
 		$this->mail->sendEmailToSiteOwner(
 			$id,
 			"Site '{$site_name}' Has Been Created",
-			"<p>The following development website has been created:</p>
-			<p>Site: <a href='http://{$this->config->general->domain}/{$id}'>{$this->config->general->domain}/{$id}</a></p>
-			<p>Username: admin</p>
-			<p>Password: {$site_pswd}</p>
-			<p>You have 60 days from today before the site is deleted, however it can be extended on the homepage. You will be notified 5 days prior to the pending removal.</p>"
+			$this->view->render(
+				'Mail/create',
+				[
+					'url'      => "http://{$this->config->general->domain}/{$id}",
+					'username' => 'admin',
+					'password' => $site_pswd,
+				],
+				true
+			)
 		);
 
 		return "{$ssl}{$this->config->general->domain}/{$id}/wp-admin";

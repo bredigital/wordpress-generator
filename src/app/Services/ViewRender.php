@@ -23,14 +23,21 @@ class ViewRender {
 	/**
 	 * Renders the desired view to the page.
 	 *
-	 * @param string $view     The desired view name.
-	 * @param array $variables Variables to pass to the view.
+	 * @param string  $view      The desired view name.
+	 * @param array   $variables Variables to pass to the view.
+	 * @param boolean $return    Return the view instead of printing.
 	 * @return void Prints to the page.
 	 */
-	public function render( $view, $variables ) {
-		echo $this->renderer->render(
+	public function render( $view, $variables, $return = false ) {
+		$content = $this->renderer->render(
 			"{$view}.html.twig",
 			$variables
 		);
+
+		if ( ! $return ) {
+			echo $content;
+		} else {
+			return $content;
+		}
 	}
 }

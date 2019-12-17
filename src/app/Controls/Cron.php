@@ -15,6 +15,7 @@ use TWPG\Controls\Export;
 use TWPG\Services\Configuration;
 use TWPG\Services\Mail;
 use TWPG\Services\SystemLog;
+use TWPG\Services\ViewRender;
 use TWPG\Models\Sitelog;
 
 use Carbon\Carbon;
@@ -31,8 +32,18 @@ class Cron extends Controls {
 	protected $mail;
 	protected $delete;
 	protected $export;
+	protected $view;
 
-	public function __construct( Configuration $config, Filesystem $fs, SystemLog $log, Sitelog $sitelog, Mail $mail, Delete $delete, Export $export ) {
+	public function __construct(
+		Configuration $config,
+		Filesystem $fs,
+		SystemLog $log,
+		Sitelog $sitelog,
+		Mail $mail,
+		Delete $delete,
+		Export $export,
+		ViewRender $view
+		) {
 		$this->config = $config;
 		$this->fs     = $fs;
 		$this->log    = $log;
@@ -40,6 +51,7 @@ class Cron extends Controls {
 		$this->mail   = $mail;
 		$this->delete = $delete;
 		$this->export = $export;
+		$this->view   = $view;
 	}
 
 	/**
@@ -98,9 +110,14 @@ class Cron extends Controls {
 		$this->mail->sendEmailToSiteOwner(
 			$id,
 			"{$name} expiry warning",
-			"<p>The following website is close to expiry:</p>
-			<p><a href='http://{$this->config->general->domain}/{$id}'>{$this->config->general->domain}/{$id}</a></p>
-			<p>If you wish to keep this site, <a href='{$this->config->general->domain}'>please visit the generator</a> to extend your container or export it.</p>"
+			$this->view->render(
+				'Mail/expiry',
+				[
+					'url'  => "http://{$this->config->general->domain}/{$id}",
+					'site' => $this->config->general->domain
+				],
+				true
+			)
 		);
 	}
 }

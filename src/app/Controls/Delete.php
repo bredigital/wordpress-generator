@@ -13,6 +13,7 @@ use TWPG\Controls\Controls;
 use TWPG\Services\Configuration;
 use TWPG\Services\Mail;
 use TWPG\Services\SystemLog;
+use TWPG\Services\ViewRender;
 use TWPG\Models\Sitelog;
 
 use Symfony\Component\Filesystem\Filesystem;
@@ -26,13 +27,22 @@ class Delete extends Controls {
 	protected $log;
 	protected $db;
 	protected $mail;
+	protected $view;
 
-	public function __construct( Configuration $config, Filesystem $fs, SystemLog $log, Sitelog $sitelog, Mail $mail ) {
+	public function __construct(
+		Configuration $config,
+		Filesystem $fs,
+		SystemLog $log,
+		Sitelog $sitelog,
+		Mail $mail,
+		ViewRender $view
+		) {
 		$this->config = $config;
 		$this->fs     = $fs;
 		$this->log    = $log;
 		$this->db     = $sitelog;
 		$this->mail   = $mail;
+		$this->view   = $view;
 	}
 
 	/**
@@ -54,17 +64,21 @@ class Delete extends Controls {
 
 		$downloadable = "";
 		if ( $this->fs->exists( "{$this->config->directories->rootpath}/assets/exports/export-site-{$id}.zip" ) ) {
-			$downloadable = "<p>A <a href='http://{$this->config->general->domain}/assets/exports/export-site-{$id}.zip'>downloadable backup of the deleted site</a> is available.</p>";
+			$downloadable = "http://{$this->config->general->domain}/assets/exports/export-site-{$id}.zip";
 		}
 
 		$name = ( isset( $site_info['name'] ) ) ? $site_info['name'] : "Site {$id}";
 		$this->mail->sendEmailToSiteOwner(
 			$id,
 			"{$name} has been deleted",
-			"<p>The following website has been deleted (manually or automatically) from the WordPress generator:</p>
-			<p><a href='http://{$this->config->general->domain}/{$id}'>{$this->config->general->domain}/{$id}</a></p>
-			<p>If this was unexpected, please note that there is a 60 day timer on each site which requires manually extending if desired to stay longer.</p>
-			{$downloadable}"
+			$this->view->render(
+				'Mail/delete',
+				[
+					'url'         => "http://{$this->config->general->domain}/{$id}",
+					'downloadZip' => ( ! empty( $downloadable ) ) ? $downloadable : null,
+				],
+				true
+			)
 		);
 
 		$this->db->purge( $id, ( $cron ) ? 'CRON' : $_SERVER['REMOTE_ADDR'] );
