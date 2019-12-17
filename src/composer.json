@@ -2,6 +2,8 @@
 	"name": "bredigital/wordpress-generator",
 	"description": "Creates sandbox-style spin-up WordPress site for quick use purposes",
 	"version": "1.1-beta",
+	"type": "project",
+	"license": "GPL-3.0",
 	"require": {
 		"monolog/monolog": "^1.22",
 		"symfony/dotenv": "^3.3",
