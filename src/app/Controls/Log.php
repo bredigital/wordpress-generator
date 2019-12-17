@@ -51,7 +51,7 @@ class Log extends Controls {
 			'log',
 			[
 				'page_title'   => ( $id == 0 ) ? 'System Log' : "Site {$id} Log",
-				'log_header'   => ( $id == 0 ) ? 'WPDS Error Log' : "WPDS Error Log for site {$id}",
+				'log_header'   => ( $id == 0 ) ? 'Error Log for generator' : "Error Log for site {$id}",
 				'log_contents' => $logContents,
 				'return_url'   => $this->config->general->domain,
 				'show_exluder' => ( $id == 0 ) ? true : false

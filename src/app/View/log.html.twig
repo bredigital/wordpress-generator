@@ -9,10 +9,14 @@
 		<a class="btn btn-info" href="//{{ return_url }}/index.php?control=log&full">Show full log</a>
 		{% endif %}
 	</p>
-	{% if log_contents is not null %}
-	<pre class='pre-scrollable'>{{ log_contents }}</pre>
-	{% else %}
-	<p>No log entries found.</p>
-	{% endif %}
 </div>
+{% if log_contents is not null %}
+<div class="container-fluid">
+	<pre class='pre-scrollable bg-dark text-white'>{{ log_contents }}</pre>
+</div>
+{% else %}
+<div class="container">
+	<p>No log entries found.</p>
+</div>
+{% endif %}
 {% endblock %}
