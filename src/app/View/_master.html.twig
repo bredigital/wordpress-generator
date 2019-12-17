@@ -22,4 +22,9 @@
 	</head>
 	<body>
 		{% block content %}{% endblock %}
+		<footer class="footer">
+			<div class="container">
+				<p class="text-muted">Generator {{ versions.app }}, using PHP {{ versions.php }} and {{ versions.wpcli }}</p>
+			</div>
+		</footer>
 	</body>

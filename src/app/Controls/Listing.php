@@ -81,10 +81,6 @@ class Listing extends Controls {
 				'page_title'    => 'Home',
 				'ssl_available' => $this->config->general->sslAvailable,
 				'listings'      => $listCollection,
-				'versions'      => [
-					'php'   => phpversion(),
-					'wpcli' => $this->com->wpcli_version(),
-				],
 				'banner'        => $this->showBannerMessage(),
 			]
 		);

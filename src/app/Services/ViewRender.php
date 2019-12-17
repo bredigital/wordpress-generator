@@ -9,13 +9,18 @@
 
 namespace TWPG\Services;
 
+use TWPG\Services\Com;
+
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
 class ViewRender {
+	protected $com;
 	protected $loader;
 	protected $renderer;
-	public function __construct() {
+	public function __construct( Com $com ) {
+		$this->com      = $com;
+
 		$this->loader   = new FilesystemLoader( __DIR__ . '/../View' );
 		$this->renderer = new Environment( $this->loader );
 	}
@@ -29,6 +34,12 @@ class ViewRender {
 	 * @return void Prints to the page.
 	 */
 	public function render( $view, $variables, $return = false ) {
+		$variables['versions'] = [
+			'app'   => json_decode( file_get_contents( __DIR__ . '/../../composer.json' ) )->version,
+			'php'   => phpversion(),
+			'wpcli' => $this->com->wpcli_version(),
+		];
+
 		$content = $this->renderer->render(
 			"{$view}.html.twig",
 			$variables
