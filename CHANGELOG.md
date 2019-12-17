@@ -10,6 +10,9 @@ no longer available.
 - Twig moved to custom class.
 - Email HTML moved to Twig.
 
+### Fixed
+- Downloadable backup link in deletion email appeared when such didn't exist.
+
 ## [1.1b] - 2019-12-17
 ### Added
 - Password for the generated site is emailed to you (#2).

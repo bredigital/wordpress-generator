@@ -1,6 +1,6 @@
 <p>The following website has been deleted (manually or automatically) from the WordPress generator:</p>
 <p><a href='{{ url }}'>{{ url }}</a></p>
 <p>If this was unexpected, please note that there is a 60 day timer on each site which requires manually extending if desired to stay longer.</p>
-{% if downloadZip is defined %}
+{% if downloadZip is not null %}
 <p>A <a href='{{ downloadZip }}'>downloadable backup of the deleted site</a> is available.</p>
 {% endif %}
