@@ -50,13 +50,19 @@
 								</td>
 								<td class='sitetable url'><a href='{{ listing.urls.site }}'>{{ listing.urls.site }}</a></td>
 								<td class='sitetable version'>{{ listing.version|default('Unknown') }}</td>
-								{% if listing.daysRemain < 5 %}
+								{% if listing.isProtected %}
+								<td class='sitetable time'><em>Protected</em></td>
+								{% elseif listing.daysRemain < 5 %}
 								<td class='sitetable time'><span style='color:red'><strong>{{listing.daysRemain}}</strong> days</span></td>
 								{% else %}
 								<td class='sitetable time'><strong>{{listing.daysRemain}}</strong> days</td>
 								{% endif %}
 								<td class='sitetable options'>
+									{% if listing.isProtected %}
+									<a class='btn btn-sm btn-danger disabled'>Delete</a>
+									{% else %}
 									<a class='btn btn-sm btn-danger' onclick="return confirm('Are you sure?')" href='{{ listing.urls.delete }}'>Delete</a>
+									{% endif %}
 									<a class='btn btn-sm btn-primary' href='{{ listing.urls.export }}'>Export</a>
 									<a class='btn btn-sm btn-info' href='{{ listing.urls.extend }}'>Extend</a>
 									<a class='btn btn-sm btn-info' href='{{ listing.urls.log }}'>Log</a>

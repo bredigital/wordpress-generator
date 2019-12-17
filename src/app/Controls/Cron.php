@@ -53,6 +53,11 @@ class Cron extends Controls {
 		$prunelist = [];
 
 		foreach ( $listings as $listing ) {
+			if ( filter_var( $listing['protected'], FILTER_VALIDATE_BOOLEAN ) ) {
+				$this->log->info( "Site {$listing['id']} skipped as it is marked as protected." );
+				continue;
+			}
+
 			$daysRemaining = $this->daysRemaining( Carbon::parse( $listing['created_date']), $listing['extensiondays'] );
 
 			// Polite Warning

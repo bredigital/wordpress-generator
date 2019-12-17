@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS `wpmgr_sitelog` (
   `secure` tinyint(1) NOT NULL DEFAULT '0',
   `extensiondays` int(11) NOT NULL DEFAULT '0',
   `emailreminder` tinyint(4) NOT NULL DEFAULT '0',
+  `protected` tinyint(1) NOT NULL DEFAULT '0',
   `created_by` varchar(45) DEFAULT NULL,
   `created_date` datetime DEFAULT NULL,
   `deleted_by` varchar(45) DEFAULT NULL,

@@ -44,6 +44,12 @@ class Delete extends Controls {
 	 */
 	public function deleteSite( $id, $cron = false ) {
 		$site_info = $this->db->get( $id );
+
+		if ( filter_var( $site_info['protected'], FILTER_VALIDATE_BOOLEAN ) ) {
+			$this->log->info( "Deletion for site {$id} prevented due to protected status." );
+			return false;
+		}
+
 		$this->log->info( "Deletion started for site {$id}." );
 
 		$downloadable = "";

@@ -47,17 +47,18 @@ class Listing extends Controls {
 				$useSSL = ( $listing["secure"] === 1 ) ? 'https://' : 'http://';
 
 				$listCollection[] = [
-					'name'       => ( empty( $listing['name'] ) ) ? '<i>Purpose not set</i>' : $listing['name'],
-					'version'    => ( empty( $wp_version ) ) ? null : $wp_version,
-					'daysRemain' => $this->daysRemaining( Carbon::parse( $listing['created_date'] ), $listing['extensiondays'] ),
-					'urls'       => [
+					'name'        => ( empty( $listing['name'] ) ) ? '<i>Purpose not set</i>' : $listing['name'],
+					'version'     => ( empty( $wp_version ) ) ? null : $wp_version,
+					'daysRemain'  => $this->daysRemaining( Carbon::parse( $listing['created_date'] ), $listing['extensiondays'] ),
+					'isProtected' => filter_var( $listing['protected'], FILTER_VALIDATE_BOOLEAN ),
+					'urls'        => [
 						'site'   => $useSSL . getenv( 'GN_DOMAIN' ) . '/' . $listing['id'],
 						'delete' => "index.php?control=delete&id=" . $listing['id'],
 						'export' => "index.php?control=export&id=" . $listing['id'],
 						'extend' => "index.php?control=extend&id=" . $listing['id'],
 						'log'    => "index.php?control=log&id="    . $listing['id']
 					],
-					'dbExists'   => ( count( $this->db->tables( $listing['id'] ) ) > 0 ) ? true : false
+					'dbExists'    => ( count( $this->db->tables( $listing['id'] ) ) > 0 ) ? true : false
 				];
 			}
 		} else {

@@ -9,6 +9,7 @@ no longer available.
 - Password for the generated site is emailed to you (#2).
 - Emails include more site details where applicable (#3).
 - Warning messages can be shown via txt files in the root.
+- Protected status to avoid a site being deleted.
 
 ### Changed
 - Mail from and name are passed to WordPress sites via generator plugin.

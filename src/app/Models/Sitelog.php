@@ -80,4 +80,10 @@ class Sitelog extends Models {
 			"UPDATE {$this->config->database->maintable} SET emailreminder =  ? WHERE id = ?"
 		)->execute( [ (int)$blResp, $id ] );
 	}
+
+	public function setProtectedStatus( $id, $isProtected ) {
+		$this->PDO_ALL->prepare(
+			"UPDATE {$this->config->database->maintable} SET protected =  ? WHERE id = ?"
+		)->execute([ (int)$isProtected, $id ] );
+	}
 }
