@@ -7,6 +7,7 @@ no longer available.
 ## Unreleased
 ### Changed
 - Dependencies upgraded (Minimum version PHP 7.2).
+- Twig moved to custom class.
 
 ## [1.1b] - 2019-12-17
 ### Added

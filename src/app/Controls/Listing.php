@@ -13,6 +13,7 @@ use TWPG\Controls\Controls;
 use TWPG\Services\Configuration;
 use TWPG\Services\Com;
 use TWPG\Services\SystemLog;
+use TWPG\Services\ViewRender;
 use TWPG\Models\Sitelog;
 
 use Symfony\Component\Filesystem\Filesystem;
@@ -27,13 +28,22 @@ class Listing extends Controls {
 	protected $log;
 	protected $db;
 	protected $com;
+	protected $view;
 
-	public function __construct( Configuration $config, Filesystem $fs, SystemLog $log, Sitelog $sitelog, Com $com ) {
+	public function __construct(
+		Configuration $config,
+		Filesystem $fs,
+		SystemLog $log,
+		Sitelog $sitelog,
+		Com $com,
+		ViewRender $view
+		) {
 		$this->config = $config;
 		$this->fs     = $fs;
 		$this->log    = $log;
 		$this->db     = $sitelog;
 		$this->com    = $com;
+		$this->view   = $view;
 	}
 
 	public function showListing() {
@@ -65,8 +75,8 @@ class Listing extends Controls {
 			$aa = "No visible entries in the system.";
 		}
 
-		echo $this->twigSetup()->render(
-			'listing.html.twig',
+		echo $this->view->render(
+			'listing',
 			[
 				'page_title'    => 'Home',
 				'ssl_available' => $this->config->general->sslAvailable,

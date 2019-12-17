@@ -10,23 +10,8 @@
 namespace TWPG\Controls;
 
 use Carbon\Carbon;
-use Twig\Environment;
-use Twig\Loader\FilesystemLoader;
 
 class Controls {
-	/**
-	 * Setup function for a twig environment.
-	 *
-	 * @todo Improve structure from procedural into an OO class layout.
-	 * @return Twig_Environment
-	 */
-	public function twigSetup() {
-		$loader = new FilesystemLoader( __DIR__ . '/../View' );
-		$twig   = new Environment( $loader );
-
-		return $twig;
-	}
-
 	/**
 	 * Returns how many days are remaining between today and the provided date.
 	 *

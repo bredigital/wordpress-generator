@@ -10,6 +10,7 @@
 namespace TWPG\Controls;
 
 use TWPG\Services\Configuration;
+use TWPG\Services\ViewRender;
 use TWPG\Controls\Controls;
 
 use Symfony\Component\Filesystem\Filesystem;
@@ -20,10 +21,12 @@ use Symfony\Component\Filesystem\Filesystem;
 class Log extends Controls {
 	protected $config;
 	protected $fs;
+	protected $view;
 
-	public function __construct( Configuration $config, Filesystem $fs ) {
+	public function __construct( Configuration $config, Filesystem $fs, ViewRender $view ) {
 		$this->config = $config;
 		$this->fs     = $fs;
+		$this->view   = $view;
 	}
 
 	public function display( $id = 0, $hideInfo = false ) {
@@ -44,8 +47,8 @@ class Log extends Controls {
 			}
 		}
 
-		echo $this->twigSetup()->render(
-			'log.html.twig',
+		echo $this->view->render(
+			'log',
 			[
 				'page_title'   => ( $id == 0 ) ? 'System Log' : "Site {$id} Log",
 				'log_header'   => ( $id == 0 ) ? 'WPDS Error Log' : "WPDS Error Log for site {$id}",
