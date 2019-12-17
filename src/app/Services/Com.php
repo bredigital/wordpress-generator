@@ -30,7 +30,7 @@ class Com {
 	public function wpcli_call( $command, $directory, $link = null, $log = true, $return_command = false ) {
 		$path = '--path=' . realpath( $directory );
 		$url  = ( isset( $link ) ) ? '--url=' . $link : null;
-		$com  = "{$this->wp} {$command} {$url} {$path} --allow-root";
+		$com  = "{$this->wp} {$command} {$url} {$path} --allow-root 2>&1";
 
 		if ( $return_command ) {
 			return $com;
