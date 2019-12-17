@@ -10,8 +10,8 @@
 namespace TWPG\Controls;
 
 use Carbon\Carbon;
-use Twig_Loader_Filesystem;
-use Twig_Environment;
+use Twig\Environment;
+use Twig\Loader\FilesystemLoader;
 
 class Controls {
 	/**
@@ -21,8 +21,8 @@ class Controls {
 	 * @return Twig_Environment
 	 */
 	public function twigSetup() {
-		$loader = new Twig_Loader_Filesystem( __DIR__ . '/../View' );
-		$twig   = new Twig_Environment( $loader );
+		$loader = new FilesystemLoader( __DIR__ . '/../View' );
+		$twig   = new Environment( $loader );
 
 		return $twig;
 	}

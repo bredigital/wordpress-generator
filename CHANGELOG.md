@@ -4,6 +4,10 @@ Adheres to [Keep a Changelog][KC], and [Semantic Versioning][SV].
 This has been migrated from Subversion to Git(Hub). Versions prior to 1.0b are
 no longer available.
 
+## Unreleased
+### Changed
+- Dependencies upgraded (Minimum version PHP 7.2).
+
 ## [1.1b] - 2019-12-17
 ### Added
 - Password for the generated site is emailed to you (#2).
