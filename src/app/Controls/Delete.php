@@ -87,7 +87,7 @@ class Delete extends Controls {
 			try {
 				$this->fs->remove( [ "{$this->config->directories->rootpath}/wordpress/" ] );
 			} catch ( \Exception $e ) {
-				$this->log->error( 'An error occured during the delete.', $e->getMessage() );
+				$this->log->error( 'An error occured during the delete: ' . $e->getMessage() );
 				return false;
 			}
 
