@@ -7,6 +7,14 @@ testing without configuration. All through the power of [WP-CLI][wp]!
 This is intended for internal classic hosting. **This is not production-ready
 software.**
 
+## Download
+Pre-made setups can be found on the [releases page][r], as
+`wordpress-generator-x.x.zip`. Simply extract into the root of your desired web
+directory, rename `.env.example` to `.env` and configure as desired.
+
+Database is not currently setup for you, please run [this script][rd] on your
+database in the meantime.
+
 ## Setup
 Setup requires [Composer][c]. Run composer install in the main directory to grab
 the vendor dependencies. After this, make a copy of the `env.example` file (just
@@ -33,3 +41,5 @@ Within `assets/wordpress` you can place themes and plugins (regular and must-use
 
 [wp]: https://wp-cli.org/
 [c]:  https://getcomposer.org/
+[r]:  https://github.com/bredigital/wordpress-generator/releases
+[rd]: https://github.com/bredigital/wordpress-generator/blob/master/docker/mysql/create-stagingtable.sql
