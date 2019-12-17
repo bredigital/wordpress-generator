@@ -4,7 +4,7 @@ Adheres to [Keep a Changelog][KC], and [Semantic Versioning][SV].
 This has been migrated from Subversion to Git(Hub). Versions prior to 1.0b are
 no longer available.
 
-## Unreleased
+## [1.1b] - 2019-12-17
 ### Added
 - Password for the generated site is emailed to you (#2).
 - Emails include more site details where applicable (#3).
