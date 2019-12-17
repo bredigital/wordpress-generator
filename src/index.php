@@ -23,7 +23,7 @@ $id          = ( !empty( $_GET['id'] ) ) ? $_GET['id'] : 0;
 $name        = ( !empty( $_GET['name'] ) ) ? $_GET['name'] : null;
 $email       = ( !empty( $_GET['email'] ) ) ? $_GET['email'] : null;
 $useSSL      = ( $config->general->sslAvailable ) ? ( !empty( $_GET['secure'] ) ) ? (bool)$_GET['secure'] : false : false;
-$excludeinfo = ( isset( $_GET['excludeinfo'] ) ) ? true : false;
+$fulloutput  = ( isset( $_GET['full'] ) ) ? true : false;
 
 if ( $control === null ) {
 	$di->get( TWPG\Controls\Listing::class )->showListing();
@@ -48,7 +48,7 @@ if ( $control === null ) {
 			header( 'Location: http://' . $config->general->domain );
 			break;
 		case 'log':
-			$di->get( TWPG\Controls\Log::class )->display( $id, $excludeinfo );
+			$di->get( TWPG\Controls\Log::class )->display( $id, $fulloutput );
 			break;
 		case 'export':
 			$file = $di->get( TWPG\Controls\Export::class )->createExportArchive( $id );

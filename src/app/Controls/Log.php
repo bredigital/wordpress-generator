@@ -29,13 +29,13 @@ class Log extends Controls {
 		$this->view   = $view;
 	}
 
-	public function display( $id = 0, $hideInfo = false ) {
-		$logContents = 'No log file exists.';
+	public function display( $id = 0, $showAll = false ) {
+		$logContents = null;
 		if ( $id == 0 ) {
 			$content = "{$this->config->directories->rootpath}/error.log";
 			if ( $this->fs->exists( $content ) ) {
-				if ( $hideInfo ) {
-					$logContents = $this->excludeInfo( file_get_contents( $content ) );
+				if ( ! $showAll ) {
+					$logContents = $this->excludeFull( file_get_contents( $content ) );
 				} else {
 					$logContents = file_get_contents( $content );
 				}
@@ -59,16 +59,16 @@ class Log extends Controls {
 		);
 	}
 
-	private function excludeInfo( $blob ) {
+	private function excludeFull( $blob ) {
 		$document = explode( "\n", $blob );
 		$filtered = '';
 
 		foreach ( $document as $line ) {
-			if ( ! strpos( $line, '.INFO' ) ) {
+			if ( ! strpos( $line, '.INFO' ) && ! strpos( $line, '.DEBUG' ) ) {
 				$filtered .= $line . "\n";
 			}
 		}
 
-		return $filtered;
+		return ( $filtered !== "\n" ) ? $filtered : null;
 	}
 }
