@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * WordPress development container generator.
  *
@@ -58,7 +58,7 @@ class Cron extends Controls {
 	 * Runs the cron processes.
 	 * @return array
 	 */
-	public function shedule() {
+	public function shedule():array {
 		$this->log->info( "Cron job started." );
 
 		$listings  = $this->db->getAll( false );
@@ -103,7 +103,7 @@ class Cron extends Controls {
 	 * @param integer $id
 	 * @return void
 	 */
-	private function emailReminder( $id ) {
+	private function emailReminder( int $id ):void {
 		$site_info = $this->db->get( $id );
 		$name      = ( isset( $site_info['name'] ) ) ? $site_info['name'] : "Site {$id}";
 

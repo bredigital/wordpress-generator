@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * WordPress development container generator.
  *
@@ -33,7 +33,7 @@ class Export extends Controls {
 		$this->com    = $com;
 	}
 
-	public function createExportArchive( $id ) {
+	public function createExportArchive( int $id ):string {
 		$this->log->info( "Export in progress for site {$id}." );
 		ignore_user_abort( true );
 		set_time_limit( 0 );
@@ -51,7 +51,7 @@ class Export extends Controls {
 	 * @param integer $id
 	 * @return boolean
 	 */
-	public function cleanup( $id ) {
+	public function cleanup( int $id ):bool {
 		$this->fs->remove( "{$this->config->directories->siteExports}/export-site-{$id}.zip" );
 		$this->fs->remove( "{$this->config->directories->siteExports}/dbdump-{$id}.sql" );
 
@@ -65,7 +65,7 @@ class Export extends Controls {
 	 * @param boolean $includeDatabase
 	 * @return string Name of the archive
 	 */
-	private function exportFilesystem( $id, $includeDatabase = true ) {
+	private function exportFilesystem( int $id, bool $includeDatabase = true ):string {
 		$this->log->info( "Exporting {$id} filesystem." );
 
 		$rootPath = "{$this->config->directories->rootpath}/{$id}";
@@ -90,7 +90,7 @@ class Export extends Controls {
 	 * @param integer $id
 	 * @return string Name of the dump
 	 */
-	private function exportDatabase( $id ) {
+	private function exportDatabase( int $id ):string {
 		$this->log->info( "Exporting {$id} database." );
 
 		$path  = realpath( "{$this->config->directories->rootpath}/{$id}" );

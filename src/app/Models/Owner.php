@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * WordPress development container generator.
  *
@@ -22,9 +22,9 @@ class Owner extends Models {
 	 * Returns the founding user (user 1) from the specified site ID.
 	 *
 	 * @param integer $id
-	 * @return array|boolean
+	 * @return array|null
 	 */
-	public function getOwnerBySiteId( $id ) {
+	public function getOwnerBySiteId( int $id ):?array {
 		$stmt = null;
 		try {
 			$stmt = $this->PDO_ALL->query(
@@ -37,7 +37,7 @@ class Owner extends Models {
 		if ( $stmt !== false ) {
 			return $stmt->fetch();
 		} else {
-			return false;
+			return null;
 		}
 	}
 }

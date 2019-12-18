@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * WordPress development container generator.
  *
@@ -30,11 +30,11 @@ class Mail {
 		$this->owner  = $owner;
 	}
 
-	public function sendEmailToSiteOwner( $siteId, $title, $contents ) {
+	public function sendEmailToSiteOwner( int $siteId, string $title, string $contents ):bool {
 		if ( $this->config->mail->enabled ) {
 			$details = $this->owner->getOwnerBySiteId( $siteId );
 
-			if ( $details == false ) {
+			if ( empty( $details ) ) {
 				$this->log->warning(
 					"A problem occurred processing an email for {$siteId}. Could be either the site did not finish configuration, or the primary admin was deleted."
 				);

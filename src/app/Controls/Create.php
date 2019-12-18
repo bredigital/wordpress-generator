@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * WordPress development container generator.
  *
@@ -55,16 +55,16 @@ class Create extends Controls {
 	 * @param string  $email
 	 * @param string  $name
 	 * @param boolean $useSSL
-	 * @return string URL of the new site admin panel.
+	 * @return string|null URL of the new site admin panel.
 	 */
-	public function newSandbox( $email = '', $name = '', $useSSL = false ) {
+	public function newSandbox( string $email = '', ?string $name = null, bool $useSSL = false ):?string {
 		$id = $this->db->create( $name, $_SERVER['REMOTE_ADDR'], false );
 
 		$this->log->info( "Creation started for site {$id}." );
 		if ( $this->fs->exists( $id ) ) {
 			$this->log->warning( "Site {$id} already exists. Exiting." );
 
-			return [ false, 'Folder exists' ];
+			return null;
 		}
 
 		$id_dir     = "{$this->config->directories->rootpath}/{$id}";
@@ -101,7 +101,7 @@ class Create extends Controls {
 		$this->log->info( 'Process finished.' );
 
 		$this->mail->sendEmailToSiteOwner(
-			$id,
+			(int) $id,
 			"Site '{$site_name}' Has Been Created",
 			$this->view->render(
 				'Mail/create',
@@ -124,7 +124,7 @@ class Create extends Controls {
 	 * @param integer $days Days to extend by. Defaults to 30 day extensions.
 	 * @return void
 	 */
-	public function extend( $id, $days = 30 ) {
+	public function extend( int $id, int $days = 30 ):void {
         $this->log->info( "Extending site {$id} expiry by {$days} days." );
 		$this->db->extendtime( $id, $days );
 		$this->db->setReminderStatus( $id, false );
@@ -137,7 +137,7 @@ class Create extends Controls {
 	 *
 	 * @return string A randomly-generated password string.
 	 */
-	private function generatePassword() {
+	private function generatePassword():string {
 		$range = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890$%£@.,~?!';
 		$pass  = [];
 		$al    = strlen( $range ) - 1;

@@ -6,6 +6,7 @@ no longer available.
 
 ## Unreleased
 ### Changed
+- Strict mode enabled and adhered to for most classes.
 - Dependencies upgraded (Minimum version PHP 7.2).
 - Twig moved to custom class.
 - Email HTML moved to Twig.

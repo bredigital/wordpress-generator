@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * WordPress development container generator.
  *
@@ -27,7 +27,7 @@ class Com {
 		$this->wp = ( $this->config->general->system_wp ) ? 'wp' : realpath( $this->config->directories->rootpath . '/vendor/wp-cli/wp-cli/bin/wp' );
 	}
 
-	public function wpcli_call( $command, $directory, $link = null, $log = true, $return_command = false ) {
+	public function wpcli_call( string $command, string $directory, ?string $link = null, bool $log = true, bool $return_command = false ):string {
 		$path = '--path=' . realpath( $directory );
 		$url  = ( isset( $link ) ) ? '--url=' . $link : null;
 		$com  = "{$this->wp} {$command} {$url} {$path} --allow-root 2>&1";
@@ -45,7 +45,7 @@ class Com {
 		return $response;
 	}
 
-	public function wpcli_exportdb( $dloc, $directory, $link = null, $log = true ) {
+	public function wpcli_exportdb( string $dloc, string $directory, ?string $link = null, bool $log = true ):string {
 		$subcom = $this->wpcli_call(
 			"db tables --all-tables-with-prefix --format=csv",
 			$directory,
@@ -62,7 +62,7 @@ class Com {
 		);
 	}
 
-	public function wpcli_version() {
+	public function wpcli_version():string {
 		$response = shell_exec( "{$this->wp} --version" );
 		if ( ! empty( $response ) ) {
 			return $response;

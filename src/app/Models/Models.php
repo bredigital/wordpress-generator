@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * WordPress development container generator.
  *
@@ -36,12 +36,12 @@ class Models {
 	}
 
 	/**
-	 * Gets a list of datbases that are appended with the provided site ID.
+	 * Gets a list of databases that are appended with the provided site ID.
 	 *
 	 * @param integer $id
 	 * @return array
 	 */
-	public function tables( $id = false ) {
+	public function tables( int $id ):array {
 		$result     = $this->PDO_ALL->query( 'show tables' );
 		$collection = [];
 
@@ -62,7 +62,7 @@ class Models {
 	 *
 	 * @return string
 	 */
-	public function version() {
+	public function version():string {
 		return $this->PDO_ALL->query( 'select version()' )->fetchColumn();
 	}
 }

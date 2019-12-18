@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * WordPress development container generator.
  *
@@ -46,7 +46,7 @@ class Listing extends Controls {
 		$this->view   = $view;
 	}
 
-	public function showListing() {
+	public function showListing():void {
 		$listings = $this->db->getAll( false );
 
 		$listCollection = [];
@@ -75,7 +75,7 @@ class Listing extends Controls {
 			$aa = "No visible entries in the system.";
 		}
 
-		echo $this->view->render(
+		$this->view->render(
 			'listing',
 			[
 				'page_title'    => 'Home',
@@ -86,7 +86,7 @@ class Listing extends Controls {
 		);
 	}
 
-	private function showBannerMessage() {
+	private function showBannerMessage():?array {
 		$dir = $this->config->directories->rootpath;
 		if ( $this->fs->exists( "{$dir}/problem.txt" ) ) {
 			return [

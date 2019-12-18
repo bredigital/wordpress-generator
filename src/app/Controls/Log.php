@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * WordPress development container generator.
  *
@@ -29,7 +29,7 @@ class Log extends Controls {
 		$this->view   = $view;
 	}
 
-	public function display( $id = 0, $showAll = false ) {
+	public function display( int $id = 0, bool $showAll = false ):void {
 		$logContents = null;
 		if ( $id == 0 ) {
 			$content = "{$this->config->directories->rootpath}/error.log";
@@ -47,7 +47,7 @@ class Log extends Controls {
 			}
 		}
 
-		echo $this->view->render(
+		$this->view->render(
 			'log',
 			[
 				'page_title'   => ( $id == 0 ) ? 'System Log' : "Site {$id} Log",
@@ -59,7 +59,7 @@ class Log extends Controls {
 		);
 	}
 
-	private function excludeFull( $blob ) {
+	private function excludeFull( string $blob ):?string {
 		$document = explode( "\n", $blob );
 		$filtered = '';
 

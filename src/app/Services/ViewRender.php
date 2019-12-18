@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * WordPress development container generator.
  *
@@ -31,9 +31,9 @@ class ViewRender {
 	 * @param string  $view      The desired view name.
 	 * @param array   $variables Variables to pass to the view.
 	 * @param boolean $return    Return the view instead of printing.
-	 * @return void Prints to the page.
+	 * @return void Prints to the page, unless $return is true.
 	 */
-	public function render( $view, $variables, $return = false ) {
+	public function render( string $view, array $variables, bool $return = false ):?string {
 		$variables['versions'] = [
 			'app'   => json_decode( file_get_contents( __DIR__ . '/../../composer.json' ) )->version,
 			'php'   => phpversion(),
@@ -47,6 +47,8 @@ class ViewRender {
 
 		if ( ! $return ) {
 			echo $content;
+
+			return null;
 		} else {
 			return $content;
 		}

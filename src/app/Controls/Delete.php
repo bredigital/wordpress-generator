@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * WordPress development container generator.
  *
@@ -52,7 +52,7 @@ class Delete extends Controls {
 	 * @param boolean $cron
 	 * @return boolean
 	 */
-	public function deleteSite( $id, $cron = false ) {
+	public function deleteSite( int $id, bool $cron = false ):bool {
 		$site_info = $this->db->get( $id );
 
 		if ( filter_var( $site_info['protected'], FILTER_VALIDATE_BOOLEAN ) ) {
@@ -94,7 +94,7 @@ class Delete extends Controls {
 	 *
 	 * @return boolean
 	 */
-	public function forceDelete() {
+	public function forceDelete():bool {
 		$this->log->info( 'Fix called. Force-deleting \'wordpress\' folder.' );
 
 		if ( file_exists( "{$this->config->directories->rootpath}/wordpress/" ) ) {

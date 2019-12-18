@@ -38,7 +38,7 @@ class Configuration {
 		$this->directories = (object) $this->setDirectories();
 	}
 
-	private function setGeneral() {
+	private function setGeneral():array {
 		return [
 			'domain'       => $this->getEnv( 'GN_DOMAIN' ),
 			'debug'        => $this->getEnv( 'GN_DEBUG', false, 'boolean' ),
@@ -48,7 +48,7 @@ class Configuration {
 		];
 	}
 
-	private function setDatabase() {
+	private function setDatabase():array {
 		return [
 			'host'      => $this->getEnv( 'DB_HOST', 'localhost' ),
 			'port'      => $this->getEnv( 'DB_PORT', 3306 ),
@@ -59,7 +59,7 @@ class Configuration {
 		];
 	}
 
-	private function setMail() {
+	private function setMail():array {
 		return [
 			'enabled'     => $this->getEnv( 'MAIL_ON', false, 'boolean' ),
 			'fromAddress' => $this->getEnv( 'MAIL_ADDR' ),
@@ -74,7 +74,7 @@ class Configuration {
 		];
 	}
 
-	private function setDirectories() {
+	private function setDirectories():array {
 		$root = realpath( __DIR__ . '/../../' );
 
 		return [
