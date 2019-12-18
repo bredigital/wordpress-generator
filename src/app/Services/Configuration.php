@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * WordPress development container generator.
  *
@@ -41,17 +41,17 @@ class Configuration {
 	private function setGeneral():array {
 		return [
 			'domain'       => $this->getEnv( 'GN_DOMAIN' ),
-			'debug'        => $this->getEnv( 'GN_DEBUG', false, 'boolean' ),
-			'sslAvailable' => $this->getEnv( 'GN_SSL_AVAILABLE', false, 'boolean' ),
+			'debug'        => $this->getEnvBoolean( 'GN_DEBUG' ),
+			'sslAvailable' => $this->getEnvBoolean( 'GN_SSL_AVAILABLE' ),
 			'rootDir'      => __DIR__ . '/../..',
-			'system_wp'    => $this->getEnv( 'GN_SYSTEM_WPCLI', false, 'boolean' ),
+			'system_wp'    => $this->getEnvBoolean( 'GN_SYSTEM_WPCLI' ),
 		];
 	}
 
 	private function setDatabase():array {
 		return [
 			'host'      => $this->getEnv( 'DB_HOST', 'localhost' ),
-			'port'      => $this->getEnv( 'DB_PORT', 3306 ),
+			'port'      => $this->getEnv( 'DB_PORT', '3306' ),
 			'database'  => $this->getEnv( 'DB_DATABASE' ),
 			'user'      => $this->getEnv( 'DB_USER' ),
 			'password'  => $this->getEnv( 'DB_PASSWORD' ),
@@ -61,16 +61,16 @@ class Configuration {
 
 	private function setMail():array {
 		return [
-			'enabled'     => $this->getEnv( 'MAIL_ON', false, 'boolean' ),
+			'enabled'     => $this->getEnvBoolean( 'MAIL_ON' ),
 			'fromAddress' => $this->getEnv( 'MAIL_ADDR' ),
 			'fromName'    => $this->getEnv( 'MAIL_NAME', 'WordPress Generator' ),
 			'cc'          => $this->getEnv( 'MAIL_CC' ),
-			'auth'        => $this->getEnv( 'MAIL_SMTPAUTH', false, 'boolean' ),
+			'auth'        => $this->getEnvBoolean( 'MAIL_SMTPAUTH' ),
 			'user'        => $this->getEnv( 'MAIL_USER' ),
 			'password'    => $this->getEnv( 'MAIL_PASS' ),
-			'useSSL'      => $this->getEnv( 'MAIL_SSL', false, 'boolean' ),
+			'useSSL'      => $this->getEnvBoolean( 'MAIL_SSL' ),
 			'SMTP'        => $this->getEnv( 'MAIL_SMTP', 'localhost' ),
-			'Port'        => $this->getEnv( 'MAIL_PORT', 25 ),
+			'Port'        => $this->getEnv( 'MAIL_PORT', '25' ),
 		];
 	}
 
@@ -88,19 +88,30 @@ class Configuration {
 	/**
 	 * Gets the value from the specified env, with validation processing.
 	 *
-	 * @link http://php.net/manual/en/function.gettype.php
-	 * @param string $name
-	 * @param string $type Type of the specified value. Default string.
-	 * @return mixed
+	 * @param string $name    ENV variable name.
+	 * @param string $default Value to return if the ENV is not found.
+	 * @return string
 	 */
-	private function getEnv( $name, $default = false, $type = 'string' ) {
+	private function getEnv( string $name, string $default = '' ):string {
 		$get = getenv( $name );
 		if ( ! empty( $get ) ) {
-			if ( $type == 'boolean' ) {
-				return filter_var( $get, FILTER_VALIDATE_BOOLEAN );
-			} else {
-				return $get;
-			}
+			return $get;
+		} else {
+			return $default;
+		}
+	}
+
+	/**
+	 * Gets the value from the specified env, with validation processing.
+	 *
+	 * @param string $name    ENV variable name.
+	 * @param boolean $default Value to return if the ENV is not found.
+	 * @return boolean
+	 */
+	private function getEnvBoolean( string $name, bool $default = false ):bool {
+		$get = getenv( $name );
+		if ( ! empty( $get ) ) {
+			return filter_var( $get, FILTER_VALIDATE_BOOLEAN );
 		} else {
 			return $default;
 		}
