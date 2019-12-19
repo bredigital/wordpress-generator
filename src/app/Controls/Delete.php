@@ -25,7 +25,7 @@ class Delete extends Controls {
 	protected $config;
 	protected $fs;
 	protected $log;
-	protected $db;
+	protected $sitelog;
 	protected $mail;
 	protected $view;
 

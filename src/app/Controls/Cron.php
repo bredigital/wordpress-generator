@@ -28,7 +28,7 @@ class Cron extends Controls {
 	protected $config;
 	protected $fs;
 	protected $log;
-	protected $db;
+	protected $sitelog;
 	protected $mail;
 	protected $delete;
 	protected $export;

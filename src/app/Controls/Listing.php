@@ -26,7 +26,7 @@ class Listing extends Controls {
 	protected $config;
 	protected $fs;
 	protected $log;
-	protected $db;
+	protected $sitelog;
 	protected $com;
 	protected $view;
 
