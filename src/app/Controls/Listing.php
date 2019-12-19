@@ -38,16 +38,16 @@ class Listing extends Controls {
 		Com $com,
 		ViewRender $view
 		) {
-		$this->config = $config;
-		$this->fs     = $fs;
-		$this->log    = $log;
-		$this->db     = $sitelog;
-		$this->com    = $com;
-		$this->view   = $view;
+		$this->config  = $config;
+		$this->fs      = $fs;
+		$this->log     = $log;
+		$this->sitelog = $sitelog;
+		$this->com     = $com;
+		$this->view    = $view;
 	}
 
 	public function showListing():void {
-		$listings = $this->db->getAll( false );
+		$listings = $this->sitelog->getAll( false );
 
 		$listCollection = [];
 		if ( count( $listings ) > 0 ) {
@@ -59,8 +59,8 @@ class Listing extends Controls {
 				$listCollection[] = [
 					'name'        => ( empty( $listing['name'] ) ) ? '<i>Purpose not set</i>' : $listing['name'],
 					'version'     => ( empty( $wp_version ) ) ? null : $wp_version,
-					'daysRemain'  => $this->daysRemaining( Carbon::parse( $listing['created_date'] ), $listing['extensiondays'] ),
-					'isProtected' => filter_var( $listing['protected'], FILTER_VALIDATE_BOOLEAN ),
+					'daysRemain'  => $this->daysRemaining( Carbon::parse( $listing['created_date'] ), Carbon::parse( $listing['expiry_date'] ) ),
+					'isProtected' => ( ! empty( $listing['expiry_date'] ) ) ? false : true,
 					'urls'        => [
 						'site'   => $useSSL . getenv( 'GN_DOMAIN' ) . '/' . $listing['id'],
 						'delete' => "index.php?control=delete&id=" . $listing['id'],
@@ -68,7 +68,7 @@ class Listing extends Controls {
 						'extend' => "index.php?control=extend&id=" . $listing['id'],
 						'log'    => "index.php?control=log&id="    . $listing['id']
 					],
-					'dbExists'    => ( count( $this->db->tables( $listing['id'] ) ) > 0 ) ? true : false
+					'dbExists'    => ( count( $this->sitelog->tables( $listing['id'] ) ) > 0 ) ? true : false
 				];
 			}
 		} else {

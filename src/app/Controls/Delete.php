@@ -37,12 +37,12 @@ class Delete extends Controls {
 		Mail $mail,
 		ViewRender $view
 		) {
-		$this->config = $config;
-		$this->fs     = $fs;
-		$this->log    = $log;
-		$this->db     = $sitelog;
-		$this->mail   = $mail;
-		$this->view   = $view;
+		$this->config  = $config;
+		$this->fs      = $fs;
+		$this->log     = $log;
+		$this->sitelog = $sitelog;
+		$this->mail    = $mail;
+		$this->view    = $view;
 	}
 
 	/**
@@ -53,9 +53,9 @@ class Delete extends Controls {
 	 * @return boolean
 	 */
 	public function deleteSite( int $id, bool $cron = false ):bool {
-		$site_info = $this->db->get( $id );
+		$site_info = $this->sitelog->get( $id );
 
-		if ( filter_var( $site_info['protected'], FILTER_VALIDATE_BOOLEAN ) ) {
+		if ( empty( $site_info['expiry_date'] ) ) {
 			$this->log->info( "Deletion for site {$id} prevented due to protected status." );
 			return false;
 		}
@@ -81,7 +81,7 @@ class Delete extends Controls {
 			)
 		);
 
-		$this->db->purge( $id, ( $cron ) ? 'CRON' : $_SERVER['REMOTE_ADDR'] );
+		$this->sitelog->purge( $id, ( $cron ) ? 'CRON' : $_SERVER['REMOTE_ADDR'] );
 		$this->fs->remove( [ $id ] );
 
 		$this->log->info( "Site {$id} deletion successful." );

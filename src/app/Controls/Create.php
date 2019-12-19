@@ -40,13 +40,13 @@ class Create extends Controls {
 		Com $com,
 		ViewRender $view
 		) {
-		$this->config = $config;
-		$this->fs     = $fs;
-		$this->log    = $log;
-		$this->db     = $sitelog;
-		$this->mail   = $mail;
-		$this->com    = $com;
-		$this->view   = $view;
+		$this->config  = $config;
+		$this->fs      = $fs;
+		$this->log     = $log;
+		$this->sitelog = $sitelog;
+		$this->mail    = $mail;
+		$this->com     = $com;
+		$this->view    = $view;
 	}
 
 	/**
@@ -58,7 +58,7 @@ class Create extends Controls {
 	 * @return string|null URL of the new site admin panel.
 	 */
 	public function newSandbox( string $email = '', ?string $name = null, bool $useSSL = false ):?string {
-		$id = $this->db->create( $name, $_SERVER['REMOTE_ADDR'], false );
+		$id = $this->sitelog->create( $name, $_SERVER['REMOTE_ADDR'], $useSSL );
 
 		$this->log->info( "Creation started for site {$id}." );
 		if ( $this->fs->exists( $id ) ) {
@@ -126,8 +126,8 @@ class Create extends Controls {
 	 */
 	public function extend( int $id, int $days = 30 ):void {
         $this->log->info( "Extending site {$id} expiry by {$days} days." );
-		$this->db->extendtime( $id, $days );
-		$this->db->setReminderStatus( $id, false );
+		$this->sitelog->extendtime( $id, $days );
+		$this->sitelog->setReminderStatus( $id, false );
 
 		header( "Location: http://{$this->config->general->domain}" );
 	}

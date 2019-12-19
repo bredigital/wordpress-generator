@@ -6,6 +6,8 @@ no longer available.
 
 ## Unreleased
 ### Changed
+- MAJOR expiration changed to date rather than an integer incremental.
+- Protected status measured by lack of expiry date.
 - Strict mode enabled and adhered to for most classes.
 - Dependencies upgraded (Minimum version PHP 7.2).
 - Twig moved to custom class.

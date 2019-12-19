@@ -42,8 +42,16 @@ class Sitelog extends Models {
 
 	public function create( string $name = null, string $ipAddr = null, bool $secure = false ):string {
 		$this->PDO_ALL->prepare(
-			"INSERT INTO {$this->config->database->maintable} (name, secure, created_by, created_date) VALUES (?, ?, ?, ?)"
-		)->execute( [ $name, (int) $secure, $ipAddr, Carbon::now()->toDateTimeString() ] );
+			"INSERT INTO {$this->config->database->maintable} (name, secure, created_by, created_date, expiry_date)
+			VALUES (:name, :secure, :createdBy, :createdDate, :expiryDate)"
+		)->execute(
+			[
+				':name'        => $name,
+				':secure'      => (int) $secure,
+				':createdBy'   => $ipAddr,
+				':createdDate' => Carbon::now()->toDateTimeString(),
+				':expiryDate'  => Carbon::now()->addDays( 60 )->toDateTimeString(),
+			]);
 
 		return $this->PDO_ALL->lastInsertId();
 	}
@@ -61,17 +69,26 @@ class Sitelog extends Models {
 	}
 
 	public function extendtime( int $id, int $days ):void {
+		$stmt = $this->PDO_ALL->prepare(
+			"SELECT id, expiry_date FROM {$this->config->database->maintable} where id = ?"
+		);
+		$stmt->execute( [ $id ] );
+		$arr = $stmt->fetch();
+
+		$date = Carbon::parse( $arr['expiry_date'] );
+		$date->addDays( $days );
+		$date_str = $date->toDateTimeString();
+
 		$this->PDO_ALL->prepare(
-			'UPDATE wpmgr_sitelog SET extensiondays = extensiondays + ? WHERE id = ?'
-		)->execute( [ $days, $id ] );
+			'UPDATE wpmgr_sitelog SET expiry_date = ? WHERE id = ?'
+		)->execute( [ $date_str, $id ] );
 	}
 
 	public function getReminderStatus( int $id ):bool {
 		$stmt = $this->PDO_ALL->prepare(
 			"SELECT emailreminder FROM {$this->config->database->maintable} WHERE id = :id"
 		);
-		$stmt->bindParam( ':id', $id );
-		$stmt->execute();
+		$stmt->execute( [ ':id' => $id ] );
 		return filter_var( $stmt->fetch()['emailreminder'], FILTER_VALIDATE_BOOLEAN );
 	}
 
@@ -82,8 +99,17 @@ class Sitelog extends Models {
 	}
 
 	public function setProtectedStatus( int $id, bool $isProtected ):void {
-		$this->PDO_ALL->prepare(
-			"UPDATE {$this->config->database->maintable} SET protected =  ? WHERE id = ?"
-		)->execute([ (int)$isProtected, $id ] );
+		if ( $isProtected ) {
+			$this->PDO_ALL->prepare(
+				"UPDATE {$this->config->database->maintable} SET expiry_date = null WHERE id = ?"
+			)->execute( [ $id ] );
+		} else {
+			$this->PDO_ALL->prepare(
+				"UPDATE {$this->config->database->maintable} SET expiry_date = ? WHERE id = ?"
+			)->execute([
+				Carbon::now()->addDays( 60 )->toDateTimeString(),
+				$id
+			]);
+		}
 	}
 }

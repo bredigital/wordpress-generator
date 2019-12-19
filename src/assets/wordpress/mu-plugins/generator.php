@@ -9,7 +9,7 @@
  * @wordpress-plugin
  * Plugin Name: Generator configuration
  * Description: Passes synchronisation configurations from the main generator.
- * version: 0.1
+ * version: 0.2
  * Author: BRE Digital
  * Author URI: http://digital.bre.co.uk/
  * License: MIT
@@ -34,7 +34,7 @@ if ( file_exists( $comp_path ) && ! empty( $table ) ) {
 
 		$phpmailer->IsSMTP();
 	});
-	
+
 	add_filter( 'wp_mail_from', function( $original ) use ( $config ) {
 		return $config->mail->fromAddress;
 	});
@@ -48,9 +48,9 @@ if ( file_exists( $comp_path ) && ! empty( $table ) ) {
 
 		$site_id   = get_option('_wp_generator_id', -1);
 		$site_conf = $wpdb->get_results( "SELECT * FROM wpmgr_sitelog WHERE id = {$site_id}" );
-		$remaining = Carbon::now()->diffInDays(
-			Carbon::parse( $site_conf[0]->created_date )->addDays( 60 + $site_conf[0]->extensiondays ),
-			False
+		$remaining = Carbon::parse( $site_conf[0]->created_date )->diffInDays(
+			Carbon::parse( $site_conf[0]->expiry_date ),
+			false
 		);
 		$time_warn = ( $remaining <= 5 ) ? 'color:red;' : '';
 		$site_name = ( ! empty( $site_conf[0]->name ) ) ? " - {$site_conf[0]->name}" : '';
