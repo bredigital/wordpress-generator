@@ -46,5 +46,7 @@ no longer available.
 ## Removed
 - WordPress favicon removed.
 
-[KC]: https://keepachangelog.com/en/1.0.0/
-[SV]: https://semver.org/spec/v2.0.0.html
+[KC]:   https://keepachangelog.com/en/1.0.0/
+[SV]:   https://semver.org/spec/v2.0.0.html
+[1.0b]: https://github.com/bredigital/wordpress-generator/releases/tag/1.0b
+[1.1b]: https://github.com/bredigital/wordpress-generator/releases/tag/1.1b
