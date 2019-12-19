@@ -52,13 +52,15 @@ class Create extends Controls {
 	/**
 	 * Creates a new sandbox site.
 	 *
-	 * @param string  $email
-	 * @param string  $name
-	 * @param boolean $useSSL
+	 * @param string      $email
+	 * @param string      $name
+	 * @param boolean     $useSSL
+	 * @param string|null $version
 	 * @return string|null URL of the new site admin panel.
 	 */
-	public function newSandbox( string $email = '', ?string $name = null, bool $useSSL = false ):?string {
-		$id = $this->sitelog->create( $name, $_SERVER['REMOTE_ADDR'], $useSSL );
+	public function newSandbox( string $email = '', ?string $name = null, bool $useSSL = false, ?string $version = null ):?string {
+		$id      = $this->sitelog->create( $name, $_SERVER['REMOTE_ADDR'], $useSSL );
+		$version = ( isset( $version ) ) ? $version : 'latest';
 
 		$this->log->info( "Creation started for site {$id}." );
 		if ( $this->fs->exists( $id ) ) {
@@ -77,8 +79,8 @@ class Create extends Controls {
 		$path = realpath( $id_dir );
 		$url  = "{$ssl}{$this->config->general->domain}/{$id}";
 
-		$o = $this->com->wpcli_call( 'core download', $path );
-		$o = $this->com->wpcli_call( "config create --dbhost=\"{$this->config->database->host}:{$this->config->database->port}\" --dbname=\"{$this->config->database->database}\" --dbuser=\"{$this->config->database->user}\" --dbpass=\"{$this->config->database->password}\" --dbprefix=\"wp_t{$id}_\" --skip-check", $path );
+		$this->com->wpcli_call( "core download --version=\"{$version}\"", $path );
+		$this->com->wpcli_call( "config create --dbhost=\"{$this->config->database->host}:{$this->config->database->port}\" --dbname=\"{$this->config->database->database}\" --dbuser=\"{$this->config->database->user}\" --dbpass=\"{$this->config->database->password}\" --dbprefix=\"wp_t{$id}_\" --skip-check", $path );
 
 		$opts = [
 			'WP_DEBUG'         => 'true',
@@ -89,8 +91,7 @@ class Create extends Controls {
 			$this->com->wpcli_call( "config set {$name} {$val} --raw", $path, null, true );
 		}
 
-		$o = $this->com->wpcli_call( "core install --title=\"{$site_name}\" --admin_user=admin --admin_password=\"{$site_pswd}\" --admin_email=\"{$site_owner}\" --skip-email", $path, $url );
-
+		$this->com->wpcli_call( "core install --title=\"{$site_name}\" --admin_user=admin --admin_password=\"{$site_pswd}\" --admin_email=\"{$site_owner}\" --skip-email", $path, $url );
 		$this->com->wpcli_call( "option add _wp_generator_id \"{$id}\"" , $path, null, true );
 
 		$this->log->info( 'Copying in plugins & themes.' );

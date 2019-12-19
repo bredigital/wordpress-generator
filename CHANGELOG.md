@@ -7,6 +7,7 @@ no longer available.
 ## Unreleased
 ### Added
 - Sitelog table created by system when empty schema detected.
+- Version dropdown selector.
 
 ### Changed
 - MAJOR expiration changed to date rather than an integer incremental.
@@ -43,7 +44,7 @@ no longer available.
 ### Fixed
 - Export site no longer offers to download a broken archive.
 
-## Removed
+### Removed
 - WordPress favicon removed.
 
 [KC]:   https://keepachangelog.com/en/1.0.0/

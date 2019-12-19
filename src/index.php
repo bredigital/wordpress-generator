@@ -29,6 +29,7 @@ $id          = ( !empty( $_GET['id'] ) ) ? $_GET['id'] : 0;
 $name        = ( !empty( $_GET['name'] ) ) ? $_GET['name'] : null;
 $email       = ( !empty( $_GET['email'] ) ) ? $_GET['email'] : null;
 $useSSL      = ( $config->general->sslAvailable ) ? ( !empty( $_GET['secure'] ) ) ? (bool)$_GET['secure'] : false : false;
+$version     = ( !empty( $_GET['v'] ) ) ? $_GET['v'] : null;
 $fulloutput  = ( isset( $_GET['full'] ) ) ? true : false;
 
 if ( $control === null ) {
@@ -41,7 +42,7 @@ if ( $control === null ) {
 			if( $control == 'extend' ) {
 				$create->extend( $_GET["id"] );
 			} else {
-				$result = $create->newSandbox( $email, $name, $useSSL );
+				$result = $create->newSandbox( $email, $name, $useSSL, $version );
 				if( isset( $result ) ) {
 					header( 'Location: ' . $result );
 				} else {
