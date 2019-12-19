@@ -27,9 +27,6 @@ Use the following code to trigger the cron system (replace <>):
 
 `powershell "Invoke-WebRequest <root web address>/controls.php?control=cron"`
 
-**This comes with Docker support! Run `docker-compose up --build` to run this
-via Docker, and access through `localhost:58000`.**
-
 ## Sites
 Each site will be given a small must-use plugin that maintains a link back to
 the generator. This brings the generator email settings into the site, and adds

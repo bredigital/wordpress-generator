@@ -10,8 +10,14 @@
 include __DIR__ . '/vendor/autoload.php';
 
 use TWPG\Services\Configuration;
-$di     = new DI\Container();
-$config = new Configuration();
+$di       = new DI\Container();
+$config   = new Configuration();
+$db       = $di->get( TWPG\Models\Models::class );
+$db_exist = $db->doIExist( 'wpmgr_sitelog' );
+if ( ! $db_exist ) {
+	echo 'wpmgr_sitelog missing. Creating...';
+	$db->createSitelog();
+}
 
 if ( $config->general->debug ) {
 	error_reporting( E_ALL );

@@ -5,6 +5,9 @@ This has been migrated from Subversion to Git(Hub). Versions prior to 1.0b are
 no longer available.
 
 ## Unreleased
+### Added
+- Sitelog table created by system when empty schema detected.
+
 ### Changed
 - MAJOR expiration changed to date rather than an integer incremental.
 - Protected status measured by lack of expiry date.

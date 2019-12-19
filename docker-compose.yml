@@ -3,13 +3,13 @@ services:
   mail:
     image: mailhog/mailhog:latest
     ports:
-     - 58002:8025
+     - 8082:8025
   db_pma:
     depends_on:
      - db
     image: phpmyadmin/phpmyadmin:latest
     ports:
-     - 58001:80
+     - 8081:80
     environment:
       PMA_HOST: db
       PMA_USER: root
@@ -20,8 +20,6 @@ services:
     environment:
       MYSQL_DATABASE: wp_generator
       MYSQL_ROOT_PASSWORD: f8s9798739848789sd6
-    volumes:
-    - "./docker/mysql:/docker-entrypoint-initdb.d"
   www:
     depends_on:
     - db
@@ -31,7 +29,7 @@ services:
     volumes:
     - "./src:/var/www/html"
     environment:
-      GN_DOMAIN: localhost:58000
+      GN_DOMAIN: localhost:8080
       GN_DEBUG: 1
       DB_HOST: db
       DB_DATABASE: wp_generator
@@ -42,4 +40,4 @@ services:
       MAIL_SMTP: mail
       MAIL_PORT: 1025
     ports:
-    - 58000:80
+    - 8080:80
