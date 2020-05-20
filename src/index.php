@@ -7,7 +7,13 @@
  * @license GPL-3.0
  */
 
-include __DIR__ . '/vendor/autoload.php';
+ if ( file_exists( __DIR__ . '/vendor/autoload.php' ) ) {
+	require_once __DIR__ . '/vendor/autoload.php';
+} else {
+	echo "<h1>Composer autoload missing</h1>";
+	echo "<p>Dependencies not installed. Please run <code>composer install --no-dev</code> to set up.</p>";
+	die();
+}
 
 use TWPG\Services\Configuration;
 $di       = new DI\Container();
