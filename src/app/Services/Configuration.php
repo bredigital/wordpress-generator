@@ -56,7 +56,9 @@ class Configuration {
 			'database'  => $this->getEnv( 'DB_DATABASE' ),
 			'user'      => $this->getEnv( 'DB_USER' ),
 			'password'  => $this->getEnv( 'DB_PASSWORD' ),
-			'maintable' => 'wpmgr_sitelog'
+			'maintable' => 'wpmgr_sitelog',
+			'charset'   => 'utf8mb4',
+			'collation' => 'utf8mb4_unicode_ci'
 		];
 	}
 
