@@ -45,7 +45,8 @@ class Configuration {
 			'sslAvailable'   => $this->getEnvBoolean( 'GN_SSL_AVAILABLE' ),
 			'rootDir'        => __DIR__ . '/../..',
 			'system_wp'      => $this->getEnvBoolean( 'GN_SYSTEM_WPCLI' ),
-			'custom_wp_path' => $this->getEnv( 'GN_WPCLI', 'wp' )
+			'custom_wp_path' => $this->getEnv( 'GN_WPCLI', 'wp' ),
+			'disable_env'    => $this->getEnvBoolean( 'GN_ENV_DISABLE', false )
 		];
 	}
 

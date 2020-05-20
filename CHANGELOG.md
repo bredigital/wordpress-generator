@@ -18,6 +18,7 @@ no longer available.
 - Dependencies upgraded (Minimum version PHP 7.2).
 - Twig moved to custom class.
 - Email HTML moved to Twig.
+- WP-CLI runtime cache within application directory.
 
 ### Fixed
 - Downloadable backup link in deletion email appeared when such didn't exist.
