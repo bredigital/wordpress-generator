@@ -35,7 +35,8 @@ class Owner extends Models {
 		}
 
 		if ( $stmt !== false ) {
-			return $stmt->fetch();
+			$r = $stmt->fetch();
+			return ( $r !== false ) ? $r : null;
 		} else {
 			return null;
 		}

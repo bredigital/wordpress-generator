@@ -8,6 +8,8 @@ no longer available.
 ### Added
 - Sitelog table created by system when empty schema detected.
 - Version dropdown selector.
+- DB Collation can now be specified (for base system, WP may differ).
+- Custom WP-CLI path can be specified.
 
 ### Changed
 - MAJOR expiration changed to date rather than an integer incremental.
@@ -19,6 +21,8 @@ no longer available.
 
 ### Fixed
 - Downloadable backup link in deletion email appeared when such didn't exist.
+- System crash when using emojis in the name field (#8).
+- System crash when deleting a site with no user #1 (#7).
 
 ## [1.1b] - 2019-12-17
 ### Added
