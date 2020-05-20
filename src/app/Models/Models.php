@@ -9,16 +9,20 @@
 
 namespace TWPG\Models;
 
+use Exception;
 use TWPG\Services\Configuration;
+use TWPG\Services\SystemLog;
 
 use PDO;
 
 class Models {
 	protected $PDO_ALL;
 	protected $config;
+	protected $log;
 
 	public function __construct() {
 		$this->config = new Configuration();
+		$this->log    = new SystemLog();
 
 		$dsn = 'mysql:host=' . $this->config->database->host . ';port=' . $this->config->database->port . ';dbname=' . $this->config->database->database . ';charset=utf8';
 		$opt = [
@@ -27,12 +31,17 @@ class Models {
 			PDO::ATTR_EMULATE_PREPARES   => false,
 		];
 
-		$this->PDO_ALL = new PDO(
-			$dsn,
-			$this->config->database->user,
-			$this->config->database->password,
-			$opt
-		);
+		try {
+				$this->PDO_ALL = new PDO(
+				$dsn,
+				$this->config->database->user,
+				$this->config->database->password,
+				$opt
+			);
+		} catch ( Exception $e ) {
+			$this->log->error( "A database error occurred: ({$e->getCode()}) {$e->getMessage()}" );
+			die( 'A system error has occurred. Please check the logs to discover why.' );
+		}
 	}
 
 	/**

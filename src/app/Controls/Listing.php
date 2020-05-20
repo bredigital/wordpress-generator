@@ -62,7 +62,7 @@ class Listing extends Controls {
 					'daysRemain'  => $this->daysRemaining( Carbon::parse( $listing['created_date'] ), Carbon::parse( $listing['expiry_date'] ) ),
 					'isProtected' => ( ! empty( $listing['expiry_date'] ) ) ? false : true,
 					'urls'        => [
-						'site'   => $useSSL . getenv( 'GN_DOMAIN' ) . '/' . $listing['id'],
+						'site'   => $useSSL . $_ENV['GN_DOMAIN'] . '/' . $listing['id'],
 						'delete' => "index.php?control=delete&id=" . $listing['id'],
 						'export' => "index.php?control=export&id=" . $listing['id'],
 						'extend' => "index.php?control=extend&id=" . $listing['id'],

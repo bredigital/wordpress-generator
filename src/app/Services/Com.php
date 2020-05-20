@@ -24,7 +24,7 @@ class Com {
 		$this->config = $config;
 		$this->log    = $log;
 
-		$this->wp = ( $this->config->general->system_wp ) ? 'wp' : realpath( $this->config->directories->rootpath . '/vendor/wp-cli/wp-cli/bin/wp' );
+		$this->wp = ( $this->config->general->system_wp ) ? $this->config->general->custom_wp_path : realpath( $this->config->directories->rootpath . '/vendor/wp-cli/wp-cli/bin/wp' );
 	}
 
 	public function wpcli_call( string $command, string $directory, ?string $link = null, bool $log = true, bool $return_command = false ):string {
@@ -63,10 +63,11 @@ class Com {
 	}
 
 	public function wpcli_version():string {
-		$response = shell_exec( "{$this->wp} --version" );
-		if ( ! empty( $response ) ) {
+		$response = shell_exec( "{$this->wp} --version 2>&1" );
+		if ( strpos( $response, 'WP-CLI' ) !== false ) {
 			return $response;
 		} else {
+			$this->log->error( 'Cannot determine WP-CLI version: ' . $response );
 			return 'WP-CLI Init Error';
 		}
 	}

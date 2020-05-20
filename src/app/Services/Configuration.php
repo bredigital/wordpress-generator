@@ -40,11 +40,12 @@ class Configuration {
 
 	private function setGeneral():array {
 		return [
-			'domain'       => $this->getEnv( 'GN_DOMAIN' ),
-			'debug'        => $this->getEnvBoolean( 'GN_DEBUG' ),
-			'sslAvailable' => $this->getEnvBoolean( 'GN_SSL_AVAILABLE' ),
-			'rootDir'      => __DIR__ . '/../..',
-			'system_wp'    => $this->getEnvBoolean( 'GN_SYSTEM_WPCLI' ),
+			'domain'         => $this->getEnv( 'GN_DOMAIN' ),
+			'debug'          => $this->getEnvBoolean( 'GN_DEBUG' ),
+			'sslAvailable'   => $this->getEnvBoolean( 'GN_SSL_AVAILABLE' ),
+			'rootDir'        => __DIR__ . '/../..',
+			'system_wp'      => $this->getEnvBoolean( 'GN_SYSTEM_WPCLI' ),
+			'custom_wp_path' => $this->getEnv( 'GN_WPCLI', 'wp' )
 		];
 	}
 
@@ -93,7 +94,7 @@ class Configuration {
 	 * @return string
 	 */
 	private function getEnv( string $name, string $default = '' ):string {
-		$get = getenv( $name );
+		$get = ( isset( $_ENV[ $name ] ) ) ? $_ENV[ $name ] : null;
 		if ( ! empty( $get ) ) {
 			return $get;
 		} else {
@@ -109,7 +110,7 @@ class Configuration {
 	 * @return boolean
 	 */
 	private function getEnvBoolean( string $name, bool $default = false ):bool {
-		$get = getenv( $name );
+		$get = ( isset( $_ENV[ $name ] ) ) ? $_ENV[ $name ] : null;
 		if ( ! empty( $get ) ) {
 			return filter_var( $get, FILTER_VALIDATE_BOOLEAN );
 		} else {
