@@ -30,7 +30,7 @@ class Com {
 	public function wpcli_call( string $command, string $directory, ?string $link = null, bool $log = true, bool $return_command = false ):string {
 		$path = '--path=' . realpath( $directory );
 		$url  = ( isset( $link ) ) ? '--url=' . $link : null;
-		$env  = ( ! $this->config->general->disable_env ) ? 'WP_CLI_CACHE_DIR=\'' . realpath( __DIR__ . '/../../cache/' ) . '\'' : null;
+		$env  = ( ! $this->config->general->disable_env ) ? "WP_CLI_CACHE_DIR='{$this->config->directories->rootpath}/cache/'" : null;
 		$com  = "{$env} {$this->wp} {$command} {$url} {$path} --allow-root 2>&1";
 
 		if ( $return_command ) {
