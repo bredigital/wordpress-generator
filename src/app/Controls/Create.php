@@ -22,7 +22,8 @@ use Symfony\Component\Filesystem\Filesystem;
 /**
  * Functions that handle the creation or modification of generator sites.
  */
-class Create extends Controls {
+class Create extends Controls
+{
 	protected $config;
 	protected $fs;
 	protected $log;
@@ -39,7 +40,7 @@ class Create extends Controls {
 		Mail $mail,
 		Com $com,
 		ViewRender $view
-		) {
+	) {
 		$this->config  = $config;
 		$this->fs      = $fs;
 		$this->log     = $log;
@@ -58,14 +59,15 @@ class Create extends Controls {
 	 * @param string|null $version
 	 * @return string|null URL of the new site admin panel.
 	 */
-	public function newSandbox( string $email, ?string $name = null, bool $useSSL = false, ?string $version = null ):?string {
-		$id      = $this->sitelog->create( $name, $_SERVER['REMOTE_ADDR'], $useSSL );
-		$version = ( isset( $version ) ) ? $version : 'latest';
+	public function newSandbox(string $email, ?string $name = null, bool $useSSL = false, ?string $version = null):?string
+	{
+		$id      = $this->sitelog->create($name, $_SERVER['REMOTE_ADDR'], $useSSL);
+		$version = ( isset($version) ) ? $version : 'latest';
 
 		// Check if this site folder already exists.
-		$this->log->info( "Creation started for site {$id}." );
-		if ( $this->fs->exists( $id ) ) {
-			$this->log->warning( "Site {$id} already exists. Exiting." );
+		$this->log->info("Creation started for site {$id}.");
+		if ($this->fs->exists($id)) {
+			$this->log->warning("Site {$id} already exists. Exiting.");
 
 			return null;
 		}
@@ -74,14 +76,14 @@ class Create extends Controls {
 		$ssl      = ( $useSSL ) ? 'https://' : 'http://';
 		$site_url = "{$ssl}{$this->config->general->domain}/{$id}";
 
-		$this->fs->mkdir( "{$id_dir}/" );
-		$this->com->set_path( realpath( $id_dir ) );
-		$this->com->set_url( $site_url );
+		$this->fs->mkdir("{$id_dir}/");
+		$this->com->setPath(realpath($id_dir));
+		$this->com->setURL($site_url);
 
 		// Download and setup the requested copy of WordPress.
-		$this->com->download( $version );
-		$this->com->create_config( $id );
-		$this->com->set_configs(
+		$this->com->download($version);
+		$this->com->createConfig($id);
+		$this->com->setConfigs(
 			[
 				'WP_DEBUG'         => 'true',
 				'WP_DEBUG_LOG'     => 'true',
@@ -90,17 +92,17 @@ class Create extends Controls {
 		);
 
 		// Setup WordPress with their details, and indentify with the mu-plugin.
-		$site_name = ( empty( $name ) ) ? "Spinup {$id}" : $name;
-		$account   = $this->com->install( $site_name, $email );
-		$this->com->set_options( [ '_wp_generator_id' => $id ] );
+		$site_name = ( empty($name) ) ? "Spinup {$id}" : $name;
+		$account   = $this->com->install($site_name, $email);
+		$this->com->setOptions([ '_wp_generator_id' => $id ]);
 
 		// Copy all the plugins and themes for a new site.
-		$this->log->info( 'Copying in plugins & themes.' );
-		$this->fs->mirror( "{$this->config->directories->wordpressInstall}/mu-plugins", "{$id_dir}/wp-content/mu-plugins" );
-		$this->fs->mirror( "{$this->config->directories->wordpressInstall}/plugins", "{$id_dir}/wp-content/plugins" );
-		$this->fs->mirror( "{$this->config->directories->wordpressInstall}/themes", "{$id_dir}/wp-content/themes" );
+		$this->log->info('Copying in plugins & themes.');
+		$this->fs->mirror("{$this->config->directories->wordpressInstall}/mu-plugins", "{$id_dir}/wp-content/mu-plugins");
+		$this->fs->mirror("{$this->config->directories->wordpressInstall}/plugins", "{$id_dir}/wp-content/plugins");
+		$this->fs->mirror("{$this->config->directories->wordpressInstall}/themes", "{$id_dir}/wp-content/themes");
 
-		$this->log->info( 'Process finished.' );
+		$this->log->info('Process finished.');
 
 		// Let the site owner know their details.
 		$this->mail->sendEmailToSiteOwner(
@@ -127,11 +129,12 @@ class Create extends Controls {
 	 * @param integer $days Days to extend by. Defaults to 30 day extensions.
 	 * @return void
 	 */
-	public function extend( int $id, int $days = 30 ):void {
-        $this->log->info( "Extending site {$id} expiry by {$days} days." );
-		$this->sitelog->extendtime( $id, $days );
-		$this->sitelog->setReminderStatus( $id, false );
+	public function extend(int $id, int $days = 30):void
+	{
+		$this->log->info("Extending site {$id} expiry by {$days} days.");
+		$this->sitelog->extendtime($id, $days);
+		$this->sitelog->setReminderStatus($id, false);
 
-		header( "Location: http://{$this->config->general->domain}" );
+		header("Location: http://{$this->config->general->domain}");
 	}
 }

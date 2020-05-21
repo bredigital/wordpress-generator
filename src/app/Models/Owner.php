@@ -16,7 +16,8 @@ use PDOException;
 /**
  * Accesses WordPress user tables to pull across admin details, for communication purposes.
  */
-class Owner extends Models {
+class Owner extends Models
+{
 
 	/**
 	 * Returns the founding user (user 1) from the specified site ID.
@@ -24,17 +25,18 @@ class Owner extends Models {
 	 * @param integer $id
 	 * @return array|null
 	 */
-	public function getOwnerBySiteId( int $id ):?array {
+	public function getOwnerBySiteId(int $id):?array
+	{
 		$stmt = null;
 		try {
 			$stmt = $this->PDO_ALL->query(
 				"SELECT user_nicename, user_email FROM wp_t{$id}_users where ID = 1"
 			);
-		} catch( PDOException $e ) {
+		} catch (PDOException $e) {
 			$stmt = false;
 		}
 
-		if ( $stmt !== false ) {
+		if ($stmt !== false) {
 			$r = $stmt->fetch();
 			return ( $r !== false ) ? $r : null;
 		} else {

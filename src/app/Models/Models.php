@@ -15,12 +15,14 @@ use TWPG\Services\SystemLog;
 
 use PDO;
 
-class Models {
+class Models
+{
 	protected $PDO_ALL;
 	protected $config;
 	protected $log;
 
-	public function __construct() {
+	public function __construct()
+	{
 		$this->config = new Configuration();
 		$this->log    = new SystemLog();
 
@@ -34,14 +36,14 @@ class Models {
 
 		try {
 				$this->PDO_ALL = new PDO(
-				$dsn,
-				$this->config->database->user,
-				$this->config->database->password,
-				$opt
-			);
-		} catch ( Exception $e ) {
-			$this->log->error( "A database error occurred: ({$e->getCode()}) {$e->getMessage()}" );
-			die( 'A system error has occurred. Please check the logs to discover why.' );
+					$dsn,
+					$this->config->database->user,
+					$this->config->database->password,
+					$opt
+				);
+		} catch (Exception $e) {
+			$this->log->error("A database error occurred: ({$e->getCode()}) {$e->getMessage()}");
+			die('A system error has occurred. Please check the logs to discover why.');
 		}
 	}
 
@@ -51,16 +53,17 @@ class Models {
 	 * @param integer $id
 	 * @return array
 	 */
-	public function tables( int $id ):array {
-		$result     = $this->PDO_ALL->query( 'show tables' );
+	public function tables(int $id):array
+	{
+		$result     = $this->PDO_ALL->query('show tables');
 		$collection = [];
 
-		while ( $row = $result->fetch( PDO::FETCH_NUM ) ) {
-			if ( ! $id ) {
-				array_push( $collection, $row[0] );
+		while ($row = $result->fetch(PDO::FETCH_NUM)) {
+			if (! $id) {
+				array_push($collection, $row[0]);
 			} else {
-				if ( strpos( $row[0], 't' . $id ) !== false ) {
-					array_push( $collection, $row[0] );
+				if (strpos($row[0], 't' . $id) !== false) {
+					array_push($collection, $row[0]);
 				}
 			}
 		}
@@ -72,8 +75,9 @@ class Models {
 	 *
 	 * @return string
 	 */
-	public function version():string {
-		return $this->PDO_ALL->query( 'select version()' )->fetchColumn();
+	public function version():string
+	{
+		return $this->PDO_ALL->query('select version()')->fetchColumn();
 	}
 
 	/**
@@ -82,10 +86,11 @@ class Models {
 	 * @param string $tableName
 	 * @return void
 	 */
-	public function doIExist( string $tableName ):bool {
+	public function doIExist(string $tableName):bool
+	{
 		try {
-			$this->PDO_ALL->query( "SELECT 1 FROM {$tableName} LIMIT 1" );
-		} catch ( \Exception $e ) {
+			$this->PDO_ALL->query("SELECT 1 FROM {$tableName} LIMIT 1");
+		} catch (\Exception $e) {
 			return false;
 		}
 
@@ -97,7 +102,8 @@ class Models {
 	 *
 	 * @return void
 	 */
-	public function createSitelog():void {
+	public function createSitelog():void
+	{
 		$sql = "CREATE TABLE IF NOT EXISTS `wpmgr_sitelog` (
 			`id` int(11) NOT NULL AUTO_INCREMENT,
 			`name` varchar(255) DEFAULT NULL,
@@ -112,6 +118,6 @@ class Models {
 		  ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET={$this->config->database->charset};
 		  ";
 
-		$this->PDO_ALL->exec( $sql );
+		$this->PDO_ALL->exec($sql);
 	}
 }

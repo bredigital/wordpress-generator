@@ -19,22 +19,25 @@ use PHPMailer\PHPMailer\Exception;
 /**
  * Handles the dispatch of emails sent from the internal system itself.
  */
-class Mail {
+class Mail
+{
 	protected $config;
 	protected $log;
 	protected $owner;
 
-	public function __construct( Configuration $config, SystemLog $log, Owner $owner ) {
+	public function __construct(Configuration $config, SystemLog $log, Owner $owner)
+	{
 		$this->config = $config;
 		$this->log    = $log;
 		$this->owner  = $owner;
 	}
 
-	public function sendEmailToSiteOwner( int $siteId, string $title, string $contents ):bool {
-		if ( $this->config->mail->enabled ) {
-			$details = $this->owner->getOwnerBySiteId( $siteId );
+	public function sendEmailToSiteOwner(int $siteId, string $title, string $contents):bool
+	{
+		if ($this->config->mail->enabled) {
+			$details = $this->owner->getOwnerBySiteId($siteId);
 
-			if ( empty( $details ) ) {
+			if (empty($details)) {
 				$this->log->warning(
 					"A problem occurred processing an email for {$siteId}. Could be either the site did not finish configuration, or the primary admin was deleted."
 				);
@@ -42,7 +45,7 @@ class Mail {
 				return false;
 			}
 
-			$mail = new PHPMailer( true );
+			$mail = new PHPMailer(true);
 			try {
 				$mail->Host       = $this->config->mail->SMTP;
 				$mail->SMTPAuth   = $this->config->mail->auth;
@@ -50,17 +53,17 @@ class Mail {
 				$mail->Password   = $this->config->mail->password;
 				$mail->Port       = $this->config->mail->Port;
 
-				$mail->setFrom( $this->config->mail->fromAddress, $this->config->mail->fromName );
-				$mail->addAddress( $details['user_email'], $details['user_nicename'] );
-				if ( ! empty( $this->config->mail->cc ) ) {
-					$mail->addCC( $this->config->mail->cc );
+				$mail->setFrom($this->config->mail->fromAddress, $this->config->mail->fromName);
+				$mail->addAddress($details['user_email'], $details['user_nicename']);
+				if (! empty($this->config->mail->cc)) {
+					$mail->addCC($this->config->mail->cc);
 				}
 
-				$mail->isHTML( true );
+				$mail->isHTML(true);
 				$mail->Subject = $title;
 				$mail->Body    = "<html><body>{$contents}</body></html>";
 
-				if( ! $this->config->mail->useSSL ) {
+				if (! $this->config->mail->useSSL) {
 					$mail->SMTPOptions = [
 						'ssl' => [
 							'verify_peer'       => false,
@@ -70,18 +73,18 @@ class Mail {
 					];
 				}
 
-				if( $this->config->general->debug ) {
+				if ($this->config->general->debug) {
 					$cob = $this->log;
 					$mail->SMTPDebug = 2;
-					$mail->Debugoutput = function( $str, $level ) use ( $cob ) {
-						$cob->debug( "Email  (L{$level}) : {$str}" );
+					$mail->Debugoutput = function ($str, $level) use ($cob) {
+						$cob->debug("Email  (L{$level}) : {$str}");
 					};
 				}
 
 				$mail->isSMTP();
 				$mail->send();
-			} catch ( Exception $e ) {
-				$this->log->error( 'Message could not be sent. Mailer Error: ' . $mail->ErrorInfo );
+			} catch (Exception $e) {
+				$this->log->error('Message could not be sent. Mailer Error: ' . $mail->ErrorInfo);
 				return false;
 			}
 

@@ -12,9 +12,11 @@ namespace TWPG\Services;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 
-class SystemLog extends Logger {
-	public function __construct() {
-		parent::__construct( 'MAIN' );
-		$this->pushHandler( new StreamHandler( __DIR__ . '/../../error.log', Logger::DEBUG ) );
+class SystemLog extends Logger
+{
+	public function __construct()
+	{
+		parent::__construct('MAIN');
+		$this->pushHandler(new StreamHandler(__DIR__ . '/../../error.log', Logger::DEBUG));
 	}
 }

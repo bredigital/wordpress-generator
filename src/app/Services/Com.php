@@ -15,18 +15,20 @@ use TWPG\Services\SystemLog;
 /**
  * Executes commands on WP-CLI.
  */
-class Com {
+class Com
+{
 	protected $config;
 	protected $log;
 
 	protected $wp;
 	protected $path;
 	protected $url;
-	public function __construct( Configuration $config, SystemLog $log ) {
+	public function __construct(Configuration $config, SystemLog $log)
+	{
 		$this->config = $config;
 		$this->log    = $log;
 
-		$this->wp = ( $this->config->general->system_wp ) ? $this->config->general->custom_wp_path : realpath( $this->config->directories->rootpath . '/vendor/wp-cli/wp-cli/bin/wp' );
+		$this->wp = ( $this->config->general->system_wp ) ? $this->config->general->custom_wp_path : realpath($this->config->directories->rootpath . '/vendor/wp-cli/wp-cli/bin/wp');
 	}
 
 	/**
@@ -35,7 +37,8 @@ class Com {
 	 * @param string|null $path Path of operation.
 	 * @return self
 	 */
-	public function set_path( ?string $path ):self {
+	public function setPath(?string $path):self
+	{
 		$this->path = $path;
 
 		return $this;
@@ -47,7 +50,8 @@ class Com {
 	 * @param string|null $path Path of operation.
 	 * @return self
 	 */
-	public function set_url( ?string $url ):self {
+	public function setURL(?string $url):self
+	{
 		$this->url = $url;
 
 		return $this;
@@ -59,9 +63,10 @@ class Com {
 	 * @param string $version Desired version of WordPress. 'latest' (default), 'nightly' and a specific version supported.
 	 * @return void
 	 */
-	public function download( string $version = 'latest' ):void {
-		$version = escapeshellarg( $version );
-		$this->wpcli_call( "core download --version={$version}" );
+	public function download(string $version = 'latest'):void
+	{
+		$version = escapeshellarg($version);
+		$this->wpcliCall("core download --version={$version}");
 	}
 
 	/**
@@ -70,14 +75,15 @@ class Com {
 	 * @param string $id Used for the prefix, generally matches the site URL.
 	 * @return void
 	 */
-	public function create_config( string $id ):void {
-		$db_host = escapeshellarg( $this->config->database->host . ':' . $this->config->database->port );
-		$db_name = escapeshellarg( $this->config->database->database );
-		$db_user = escapeshellarg( $this->config->database->user );
-		$db_pass = escapeshellarg( $this->config->database->password );
-		$site_id = escapeshellarg( "wp_t{$id}_" );
+	public function createConfig(string $id):void
+	{
+		$db_host = escapeshellarg($this->config->database->host . ':' . $this->config->database->port);
+		$db_name = escapeshellarg($this->config->database->database);
+		$db_user = escapeshellarg($this->config->database->user);
+		$db_pass = escapeshellarg($this->config->database->password);
+		$site_id = escapeshellarg("wp_t{$id}_");
 
-		$this->wpcli_call(
+		$this->wpcliCall(
 			implode(
 				' ',
 				[
@@ -99,12 +105,13 @@ class Com {
 	 * @param array $configs Array key will be the config name, and value will match.
 	 * @return void
 	 */
-	public function set_configs( array $configs ):void {
-		foreach ( $configs as $name => $value ) {
-			$name  = escapeshellarg( $name );
-			$value = escapeshellarg( $value );
+	public function setConfigs(array $configs):void
+	{
+		foreach ($configs as $name => $value) {
+			$name  = escapeshellarg($name);
+			$value = escapeshellarg($value);
 
-			$this->wpcli_call( "config set {$name} {$value} --raw" );
+			$this->wpcliCall("config set {$name} {$value} --raw");
 		}
 	}
 
@@ -114,12 +121,13 @@ class Com {
 	 * @param array $configs Array key will be the config key, and value will match.
 	 * @return void
 	 */
-	public function set_options( array $configs ):void {
-		foreach ( $configs as $key => $value ) {
-			$key   = escapeshellarg( $key );
-			$value = escapeshellarg( $value );
+	public function setOptions(array $configs):void
+	{
+		foreach ($configs as $key => $value) {
+			$key   = escapeshellarg($key);
+			$value = escapeshellarg($value);
 
-			$this->wpcli_call( "option add {$key} {$value}" );
+			$this->wpcliCall("option add {$key} {$value}");
 		}
 	}
 
@@ -133,13 +141,14 @@ class Com {
 	 * @param string|null $password Specify a password, or leave for the system to generate.
 	 * @return array
 	 */
-	public function install( string $title, string $email, ?string $username = null, ?string $password = null ):array {
-		$title    = escapeshellarg( $title );
-		$email    = escapeshellarg( $email );
-		$username = escapeshellarg( ( isset( $username ) ) ? $username : 'admin' );
-		$password = escapeshellarg( ( isset( $password ) ) ? $password : $this->generatePassword() );
+	public function install(string $title, string $email, ?string $username = null, ?string $password = null):array
+	{
+		$title    = escapeshellarg($title);
+		$email    = escapeshellarg($email);
+		$username = escapeshellarg(( isset($username) ) ? $username : 'admin');
+		$password = escapeshellarg(( isset($password) ) ? $password : $this->generatePassword());
 
-		$this->wpcli_call(
+		$this->wpcliCall(
 			implode(
 				' ',
 				[
@@ -165,10 +174,11 @@ class Com {
 	 * @param string $dloc ???
 	 * @return void
 	 */
-	public function export_db( string $dloc ):void {
-		$subcom = $this->wpcli_call( "db tables --all-tables-with-prefix --format=csv", true, true );
+	public function exportDb(string $dloc):void
+	{
+		$subcom = $this->wpcliCall("db tables --all-tables-with-prefix --format=csv", true, true);
 
-		$this->wpcli_call( "db export {$dloc} --tables=$({$subcom})" );
+		$this->wpcliCall("db export {$dloc} --tables=$({$subcom})");
 	}
 
 	/**
@@ -176,12 +186,13 @@ class Com {
 	 *
 	 * @return string
 	 */
-	public function version():string {
-		$response = shell_exec( "{$this->wp} --version 2>&1" );
-		if ( strpos( $response, 'WP-CLI' ) !== false ) {
+	public function version():string
+	{
+		$response = shell_exec("{$this->wp} --version 2>&1");
+		if (strpos($response, 'WP-CLI') !== false) {
 			return $response;
 		} else {
-			$this->log->error( 'Cannot determine WP-CLI version: ' . $response );
+			$this->log->error('Cannot determine WP-CLI version: ' . $response);
 			return 'WP-CLI Init Error';
 		}
 	}
@@ -191,17 +202,18 @@ class Com {
 	 *
 	 * @return string A randomly-generated password string.
 	 */
-	private function generatePassword():string {
+	private function generatePassword():string
+	{
 		$range = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890$%£@.,~?!';
 		$pass  = [];
-		$al    = strlen( $range ) - 1;
+		$al    = strlen($range) - 1;
 
-		for ( $i = 0; $i < 12; $i++ ) {
-			$n      = rand( 0, $al );
+		for ($i = 0; $i < 12; $i++) {
+			$n      = rand(0, $al);
 			$pass[] = $range[ $n ];
 		}
 
-		return implode( $pass );
+		return implode($pass);
 	}
 
 	/**
@@ -213,20 +225,21 @@ class Com {
 	 * @param boolean $return_command Instead of running, return the command. Designed for nested statements.
 	 * @return string Response from shell_exec. Also written to the main log, if enabled.
 	 */
-	private function wpcli_call( string $command, bool $log = true, bool $return_command = false ):string {
-		$path = '--path=' . escapeshellarg( realpath( $this->path ) );
-		$url  = ( isset( $this->url ) ) ? '--url=' . escapeshellarg( $this->url ) : null;
+	private function wpcliCall(string $command, bool $log = true, bool $return_command = false):string
+	{
+		$path = '--path=' . escapeshellarg(realpath($this->path));
+		$url  = ( isset($this->url) ) ? '--url=' . escapeshellarg($this->url) : null;
 		$env  = ( ! $this->config->general->disable_env ) ? "WP_CLI_CACHE_DIR='{$this->config->directories->rootpath}/cache/'" : null;
 		$com  = "{$env} {$this->wp} {$command} {$url} {$path} --allow-root 2>&1";
 
-		if ( $return_command ) {
+		if ($return_command) {
 			return $com;
 		}
 
-		$response = shell_exec( $com );
+		$response = shell_exec($com);
 
-		if ( $log ) {
-			$this->log->info( 'WP-CLI responded with: ' . $response );
+		if ($log) {
+			$this->log->info('WP-CLI responded with: ' . $response);
 		}
 
 		return $response;

@@ -24,7 +24,8 @@ use Symfony\Component\Filesystem\Filesystem;
 /**
  * Processes designed to be run on a daily shedule, preferably called by cron/Task Manager.
  */
-class Cron extends Controls {
+class Cron extends Controls
+{
 	protected $config;
 	protected $fs;
 	protected $log;
@@ -43,7 +44,7 @@ class Cron extends Controls {
 		Delete $delete,
 		Export $export,
 		ViewRender $view
-		) {
+	) {
 		$this->config  = $config;
 		$this->fs      = $fs;
 		$this->log     = $log;
@@ -58,39 +59,40 @@ class Cron extends Controls {
 	 * Runs the cron processes.
 	 * @return array
 	 */
-	public function shedule():array {
-		$this->log->info( "Cron job started." );
+	public function shedule():array
+	{
+		$this->log->info("Cron job started.");
 
-		$listings  = $this->sitelog->getAll( false );
+		$listings  = $this->sitelog->getAll(false);
 		$prunelist = [];
 
-		foreach ( $listings as $listing ) {
-			if ( ! empty( $listing['expiry_date'] ) ) {
-				$daysRemaining = $this->daysRemaining( Carbon::parse( $listing['created_date']), Carbon::parse( $listing['expiry_date']) );
+		foreach ($listings as $listing) {
+			if (! empty($listing['expiry_date'])) {
+				$daysRemaining = $this->daysRemaining(Carbon::parse($listing['created_date']), Carbon::parse($listing['expiry_date']));
 
 				// Polite Warning.
-				if ( $daysRemaining <= 5 ) {
-					if ( ! $this->sitelog->getReminderStatus( $listing["id"] ) ) {
-						$this->log->info( "{$daysRemaining} for site {$listing['id']}, sending the site owner an expiry warning." );
-						$this->emailReminder( $listing['id'] );
-						$this->sitelog->setReminderStatus( $listing["id"], true );
+				if ($daysRemaining <= 5) {
+					if (! $this->sitelog->getReminderStatus($listing["id"])) {
+						$this->log->info("{$daysRemaining} for site {$listing['id']}, sending the site owner an expiry warning.");
+						$this->emailReminder($listing['id']);
+						$this->sitelog->setReminderStatus($listing["id"], true);
 					}
 				}
 
 				// Grim Reaper.
-				if ( $daysRemaining <= 0 ) {
-					$this->log->info( 'Time elapsed for site ' . $listing["id"] . '. Removing.' );
+				if ($daysRemaining <= 0) {
+					$this->log->info('Time elapsed for site ' . $listing["id"] . '. Removing.');
 
 					// Try and save their site, in case the system accidentally deletes it, or they're on holiday.
-					$this->export->createExportArchive( $listing["id"] );
-					$this->delete->deleteSite( $listing["id"], true );
-					$this->log->info( 'Site ' . $listing["id"] . ' removed.' );
-					array_push( $prunelist, $listing["id"] );
+					$this->export->createExportArchive($listing["id"]);
+					$this->delete->deleteSite($listing["id"], true);
+					$this->log->info('Site ' . $listing["id"] . ' removed.');
+					array_push($prunelist, $listing["id"]);
 				}
 			}
 		}
 
-		$this->log->info( 'Cron job ended.' );
+		$this->log->info('Cron job ended.');
 
 		return $prunelist;
 	}
@@ -100,9 +102,10 @@ class Cron extends Controls {
 	 * @param integer $id
 	 * @return void
 	 */
-	private function emailReminder( int $id ):void {
-		$site_info = $this->sitelog->get( $id );
-		$name      = ( isset( $site_info['name'] ) ) ? $site_info['name'] : "Site {$id}";
+	private function emailReminder(int $id):void
+	{
+		$site_info = $this->sitelog->get($id);
+		$name      = ( isset($site_info['name']) ) ? $site_info['name'] : "Site {$id}";
 
 		$this->mail->sendEmailToSiteOwner(
 			$id,

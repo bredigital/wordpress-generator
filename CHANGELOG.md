@@ -20,6 +20,7 @@ no longer available.
 - Email HTML moved to Twig.
 - WP-CLI runtime cache within application directory.
 - Com handles creation tasks. WPCLI access restricted to class only.
+- Internal code formatting now partially follows PSR-2.
 
 ### Fixed
 - Downloadable backup link in deletion email appeared when such didn't exist.

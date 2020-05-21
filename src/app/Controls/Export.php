@@ -20,29 +20,32 @@ use Symfony\Component\Filesystem\Filesystem;
 /**
  * Class designed to handle the full export process of generator sites.
  */
-class Export extends Controls {
+class Export extends Controls
+{
 	protected $config;
 	protected $fs;
 	protected $log;
 	protected $com;
 
-	public function __construct( Configuration $config, Filesystem $fs, SystemLog $log, Com $com ) {
+	public function __construct(Configuration $config, Filesystem $fs, SystemLog $log, Com $com)
+	{
 		$this->config = $config;
 		$this->fs     = $fs;
 		$this->log    = $log;
 		$this->com    = $com;
 	}
 
-	public function createExportArchive( int $id ):string {
-		$this->log->info( "Export in progress for site {$id}." );
-		ignore_user_abort( true );
-		set_time_limit( 0 );
+	public function createExportArchive(int $id):string
+	{
+		$this->log->info("Export in progress for site {$id}.");
+		ignore_user_abort(true);
+		set_time_limit(0);
 
-		$this->cleanup( $id );
+		$this->cleanup($id);
 
-		$this->log->info( 'Export finished.' );
+		$this->log->info('Export finished.');
 
-		return $this->exportFilesystem( $id );
+		return $this->exportFilesystem($id);
 	}
 
 	/**
@@ -51,9 +54,10 @@ class Export extends Controls {
 	 * @param integer $id
 	 * @return boolean
 	 */
-	public function cleanup( int $id ):bool {
-		$this->fs->remove( "{$this->config->directories->siteExports}/export-site-{$id}.zip" );
-		$this->fs->remove( "{$this->config->directories->siteExports}/dbdump-{$id}.sql" );
+	public function cleanup(int $id):bool
+	{
+		$this->fs->remove("{$this->config->directories->siteExports}/export-site-{$id}.zip");
+		$this->fs->remove("{$this->config->directories->siteExports}/dbdump-{$id}.sql");
 
 		return true;
 	}
@@ -65,20 +69,21 @@ class Export extends Controls {
 	 * @param boolean $includeDatabase
 	 * @return string Name of the archive
 	 */
-	private function exportFilesystem( int $id, bool $includeDatabase = true ):string {
-		$this->log->info( "Exporting {$id} filesystem." );
+	private function exportFilesystem(int $id, bool $includeDatabase = true):string
+	{
+		$this->log->info("Exporting {$id} filesystem.");
 
 		$rootPath = "{$this->config->directories->rootpath}/{$id}";
 		$zipName  = "export-site-{$id}.zip";
 		$zipPath  = "{$this->config->directories->siteExports}/{$zipName}";
 
-		$zip = Zip::create( $zipPath );
-		$zip->add( $rootPath );
-		$zip->add( "{$this->config->directories->assets}/export-readme.txt" );
+		$zip = Zip::create($zipPath);
+		$zip->add($rootPath);
+		$zip->add("{$this->config->directories->assets}/export-readme.txt");
 
-		if( $includeDatabase ) {
-			$dumpName = $this->exportDatabase( $id );
-			$zip->add( "{$this->config->directories->siteExports}/{$dumpName}" );
+		if ($includeDatabase) {
+			$dumpName = $this->exportDatabase($id);
+			$zip->add("{$this->config->directories->siteExports}/{$dumpName}");
 		}
 
 		return $zipName;
@@ -90,14 +95,15 @@ class Export extends Controls {
 	 * @param integer $id
 	 * @return string Name of the dump
 	 */
-	private function exportDatabase( int $id ):string {
-		$this->log->info( "Exporting {$id} database." );
+	private function exportDatabase(int $id):string
+	{
+		$this->log->info("Exporting {$id} database.");
 
-		$path  = realpath( "{$this->config->directories->rootpath}/{$id}" );
+		$path  = realpath("{$this->config->directories->rootpath}/{$id}");
 		$dname = "dbdump-{$id}.sql";
-		$dloc  = realpath( $this->config->directories->siteExports ) . "/{$dname}";
-		$this->com->set_path( $path );
-		$this->com->export_db( $dloc );
+		$dloc  = realpath($this->config->directories->siteExports) . "/{$dname}";
+		$this->com->setPath($path);
+		$this->com->exportDb($dloc);
 
 		return $dname;
 	}

@@ -21,7 +21,8 @@ use Symfony\Component\Filesystem\Filesystem;
 /**
  * The deletion class for the generator sites.
  */
-class Delete extends Controls {
+class Delete extends Controls
+{
 	protected $config;
 	protected $fs;
 	protected $log;
@@ -36,7 +37,7 @@ class Delete extends Controls {
 		Sitelog $sitelog,
 		Mail $mail,
 		ViewRender $view
-		) {
+	) {
 		$this->config  = $config;
 		$this->fs      = $fs;
 		$this->log     = $log;
@@ -52,22 +53,23 @@ class Delete extends Controls {
 	 * @param boolean $cron
 	 * @return boolean
 	 */
-	public function deleteSite( int $id, bool $cron = false ):bool {
-		$site_info = $this->sitelog->get( $id );
+	public function deleteSite(int $id, bool $cron = false):bool
+	{
+		$site_info = $this->sitelog->get($id);
 
-		if ( empty( $site_info['expiry_date'] ) ) {
-			$this->log->info( "Deletion for site {$id} prevented due to protected status." );
+		if (empty($site_info['expiry_date'])) {
+			$this->log->info("Deletion for site {$id} prevented due to protected status.");
 			return false;
 		}
 
-		$this->log->info( "Deletion started for site {$id}." );
+		$this->log->info("Deletion started for site {$id}.");
 
 		$downloadable = "";
-		if ( $this->fs->exists( "{$this->config->directories->rootpath}/assets/exports/export-site-{$id}.zip" ) ) {
+		if ($this->fs->exists("{$this->config->directories->rootpath}/assets/exports/export-site-{$id}.zip")) {
 			$downloadable = "http://{$this->config->general->domain}/assets/exports/export-site-{$id}.zip";
 		}
 
-		$name = ( isset( $site_info['name'] ) ) ? $site_info['name'] : "Site {$id}";
+		$name = ( isset($site_info['name']) ) ? $site_info['name'] : "Site {$id}";
 		$this->mail->sendEmailToSiteOwner(
 			$id,
 			"{$name} has been deleted",
@@ -75,16 +77,16 @@ class Delete extends Controls {
 				'Mail/delete',
 				[
 					'url'         => "http://{$this->config->general->domain}/{$id}",
-					'downloadZip' => ( ! empty( $downloadable ) ) ? $downloadable : null,
+					'downloadZip' => ( ! empty($downloadable) ) ? $downloadable : null,
 				],
 				true
 			)
 		);
 
-		$this->sitelog->purge( $id, ( $cron ) ? 'CRON' : $_SERVER['REMOTE_ADDR'] );
-		$this->fs->remove( [ $id ] );
+		$this->sitelog->purge($id, ( $cron ) ? 'CRON' : $_SERVER['REMOTE_ADDR']);
+		$this->fs->remove([ $id ]);
 
-		$this->log->info( "Site {$id} deletion successful." );
+		$this->log->info("Site {$id} deletion successful.");
 
 		return true;
 	}
@@ -94,21 +96,22 @@ class Delete extends Controls {
 	 *
 	 * @return boolean
 	 */
-	public function forceDelete():bool {
-		$this->log->info( 'Fix called. Force-deleting \'wordpress\' folder.' );
+	public function forceDelete():bool
+	{
+		$this->log->info('Fix called. Force-deleting \'wordpress\' folder.');
 
-		if ( file_exists( "{$this->config->directories->rootpath}/wordpress/" ) ) {
+		if (file_exists("{$this->config->directories->rootpath}/wordpress/")) {
 			try {
-				$this->fs->remove( [ "{$this->config->directories->rootpath}/wordpress/" ] );
-			} catch ( \Exception $e ) {
-				$this->log->error( 'An error occured during the delete: ' . $e->getMessage() );
+				$this->fs->remove([ "{$this->config->directories->rootpath}/wordpress/" ]);
+			} catch (\Exception $e) {
+				$this->log->error('An error occured during the delete: ' . $e->getMessage());
 				return false;
 			}
 
-			$this->log->info( '\'wordpress\' folder deleted.' );
+			$this->log->info('\'wordpress\' folder deleted.');
 			return true;
 		} else {
-			$this->log->info( 'No \'wordpress\' folder found.' );
+			$this->log->info('No \'wordpress\' folder found.');
 
 			return false;
 		}

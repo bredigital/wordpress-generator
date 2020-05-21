@@ -22,7 +22,8 @@ use Carbon\Carbon;
 /**
  * Visual functions for listing and displaying the current and expired sites.
  */
-class Listing extends Controls {
+class Listing extends Controls
+{
 	protected $config;
 	protected $fs;
 	protected $log;
@@ -37,7 +38,7 @@ class Listing extends Controls {
 		Sitelog $sitelog,
 		Com $com,
 		ViewRender $view
-		) {
+	) {
 		$this->config  = $config;
 		$this->fs      = $fs;
 		$this->log     = $log;
@@ -46,21 +47,22 @@ class Listing extends Controls {
 		$this->view    = $view;
 	}
 
-	public function showListing():void {
-		$listings = $this->sitelog->getAll( false );
+	public function showListing():void
+	{
+		$listings = $this->sitelog->getAll(false);
 
 		$listCollection = [];
-		if ( count( $listings ) > 0 ) {
-			foreach ( $listings as $listing ) {
+		if (count($listings) > 0) {
+			foreach ($listings as $listing) {
 				@include __DIR__ .  "/../../{$listing["id"]}/wp-includes/version.php";
 
 				$useSSL = ( $listing["secure"] === 1 ) ? 'https://' : 'http://';
 
 				$listCollection[] = [
-					'name'        => ( empty( $listing['name'] ) ) ? '<i>Purpose not set</i>' : $listing['name'],
-					'version'     => ( empty( $wp_version ) ) ? null : $wp_version,
-					'daysRemain'  => $this->daysRemaining( Carbon::parse( $listing['created_date'] ), Carbon::parse( $listing['expiry_date'] ) ),
-					'isProtected' => ( ! empty( $listing['expiry_date'] ) ) ? false : true,
+					'name'        => ( empty($listing['name']) ) ? '<i>Purpose not set</i>' : $listing['name'],
+					'version'     => ( empty($wp_version) ) ? null : $wp_version,
+					'daysRemain'  => $this->daysRemaining(Carbon::parse($listing['created_date']), Carbon::parse($listing['expiry_date'])),
+					'isProtected' => ( ! empty($listing['expiry_date']) ) ? false : true,
 					'urls'        => [
 						'site'   => $useSSL . $_ENV['GN_DOMAIN'] . '/' . $listing['id'],
 						'delete' => "index.php?control=delete&id=" . $listing['id'],
@@ -68,7 +70,7 @@ class Listing extends Controls {
 						'extend' => "index.php?control=extend&id=" . $listing['id'],
 						'log'    => "index.php?control=log&id="    . $listing['id']
 					],
-					'dbExists'    => ( count( $this->sitelog->tables( $listing['id'] ) ) > 0 ) ? true : false
+					'dbExists'    => ( count($this->sitelog->tables($listing['id'])) > 0 ) ? true : false
 				];
 			}
 		} else {
@@ -86,28 +88,29 @@ class Listing extends Controls {
 		);
 	}
 
-	private function showBannerMessage():?array {
+	private function showBannerMessage():?array
+	{
 		$dir = $this->config->directories->rootpath;
-		if ( $this->fs->exists( "{$dir}/problem.txt" ) ) {
+		if ($this->fs->exists("{$dir}/problem.txt")) {
 			return [
 				'type'    => 'problem',
-				'message' => file_get_contents( "{$dir}/problem.txt" ),
+				'message' => file_get_contents("{$dir}/problem.txt"),
 			];
 		}
 
 		$dir = $this->config->directories->rootpath;
-		if ( $this->fs->exists( "{$dir}/warning.txt" ) ) {
+		if ($this->fs->exists("{$dir}/warning.txt")) {
 			return [
 				'type'    => 'warning',
-				'message' => file_get_contents( "{$dir}/warning.txt" ),
+				'message' => file_get_contents("{$dir}/warning.txt"),
 			];
 		}
 
 		$dir = $this->config->directories->rootpath;
-		if ( $this->fs->exists( "{$dir}/info.txt" ) ) {
+		if ($this->fs->exists("{$dir}/info.txt")) {
 			return [
 				'type'    => 'info',
-				'message' => file_get_contents( "{$dir}/info.txt" ),
+				'message' => file_get_contents("{$dir}/info.txt"),
 			];
 		}
 

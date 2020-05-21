@@ -11,7 +11,8 @@ namespace TWPG\Controls;
 
 use Carbon\Carbon;
 
-class Controls {
+class Controls
+{
 	/**
 	 * Returns how many days are remaining between today and the provided date.
 	 *
@@ -19,7 +20,8 @@ class Controls {
 	 * @var Carbon $endDate   The expiry date.
 	 * @return Integer Value between 0 and the specified days.
 	 */
-	public function daysRemaining( Carbon $startDate, Carbon $endDate ):int {
-		return $startDate->diffInDays( $endDate, false );
+	public function daysRemaining(Carbon $startDate, Carbon $endDate):int
+	{
+		return $startDate->diffInDays($endDate, false);
 	}
 }

@@ -18,32 +18,35 @@ use Symfony\Component\Filesystem\Filesystem;
 /**
  * Handles the display of collected logs, either system-wide or individual debug-mode sites.
  */
-class Log extends Controls {
+class Log extends Controls
+{
 	protected $config;
 	protected $fs;
 	protected $view;
 
-	public function __construct( Configuration $config, Filesystem $fs, ViewRender $view ) {
+	public function __construct(Configuration $config, Filesystem $fs, ViewRender $view)
+	{
 		$this->config = $config;
 		$this->fs     = $fs;
 		$this->view   = $view;
 	}
 
-	public function display( int $id = 0, bool $showAll = false ):void {
+	public function display(int $id = 0, bool $showAll = false):void
+	{
 		$logContents = null;
-		if ( $id == 0 ) {
+		if ($id == 0) {
 			$content = "{$this->config->directories->rootpath}/error.log";
-			if ( $this->fs->exists( $content ) ) {
-				if ( ! $showAll ) {
-					$logContents = $this->excludeFull( file_get_contents( $content ) );
+			if ($this->fs->exists($content)) {
+				if (! $showAll) {
+					$logContents = $this->excludeFull(file_get_contents($content));
 				} else {
-					$logContents = file_get_contents( $content );
+					$logContents = file_get_contents($content);
 				}
 			}
 		} else {
 			$content =  "{$this->config->directories->rootpath}/$id/wp-content/debug.log";
-			if ( $this->fs->exists( $content ) ) {
-				$logContents = file_get_contents( $content );
+			if ($this->fs->exists($content)) {
+				$logContents = file_get_contents($content);
 			}
 		}
 
@@ -59,12 +62,13 @@ class Log extends Controls {
 		);
 	}
 
-	private function excludeFull( string $blob ):?string {
-		$document = explode( "\n", $blob );
+	private function excludeFull(string $blob):?string
+	{
+		$document = explode("\n", $blob);
 		$filtered = '';
 
-		foreach ( $document as $line ) {
-			if ( ! strpos( $line, '.INFO' ) && ! strpos( $line, '.DEBUG' ) ) {
+		foreach ($document as $line) {
+			if (! strpos($line, '.INFO') && ! strpos($line, '.DEBUG')) {
 				$filtered .= $line . "\n";
 			}
 		}
