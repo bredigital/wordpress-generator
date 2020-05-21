@@ -76,7 +76,13 @@ class Models {
 		return $this->PDO_ALL->query( 'select version()' )->fetchColumn();
 	}
 
-	public function doIExist( $tableName ) {
+	/**
+	 * Check if the table exists.
+	 *
+	 * @param string $tableName
+	 * @return void
+	 */
+	public function doIExist( string $tableName ):bool {
 		try {
 			$this->PDO_ALL->query( "SELECT 1 FROM {$tableName} LIMIT 1" );
 		} catch ( \Exception $e ) {
@@ -86,7 +92,12 @@ class Models {
 		return true;
 	}
 
-	public function createSitelog() {
+	/**
+	 * Creates the sitelog table.
+	 *
+	 * @return void
+	 */
+	public function createSitelog():void {
 		$sql = "CREATE TABLE IF NOT EXISTS `wpmgr_sitelog` (
 			`id` int(11) NOT NULL AUTO_INCREMENT,
 			`name` varchar(255) DEFAULT NULL,

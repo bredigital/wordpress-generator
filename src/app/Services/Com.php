@@ -55,17 +55,22 @@ class Com {
 
 	/**
 	 * Runs the CLI process of downloading the desired version of WordPress.
-	 * 'path' is required.
 	 *
 	 * @param string $version Desired version of WordPress. 'latest' (default), 'nightly' and a specific version supported.
 	 * @return void
 	 */
-	public function download( string $path, string $version = 'latest' ):void {
+	public function download( string $version = 'latest' ):void {
 		$version = escapeshellarg( $version );
-		$this->wpcli_call( "core download --version={$version}", $path );
+		$this->wpcli_call( "core download --version={$version}" );
 	}
 
-	public function create_config( string $path, string $id ):void {
+	/**
+	 * Creates the wp-config file with generator settings.
+	 *
+	 * @param string $id Used for the prefix, generally matches the site URL.
+	 * @return void
+	 */
+	public function create_config( string $id ):void {
 		$db_host = escapeshellarg( $this->config->database->host . ':' . $this->config->database->port );
 		$db_name = escapeshellarg( $this->config->database->database );
 		$db_user = escapeshellarg( $this->config->database->user );
@@ -85,29 +90,50 @@ class Com {
 					"--skip-check",
 				]
 			),
-			$path
 		);
 	}
 
-	public function set_configs( string $path, array $configs ):void {
+	/**
+	 * Sets the input array as additional configuration items in wp-config.php. MUST BE CREATED FIRST.
+	 *
+	 * @param array $configs Array key will be the config name, and value will match.
+	 * @return void
+	 */
+	public function set_configs( array $configs ):void {
 		foreach ( $configs as $name => $value ) {
 			$name  = escapeshellarg( $name );
 			$value = escapeshellarg( $value );
 
-			$this->wpcli_call( "config set {$name} {$value} --raw", $path );
+			$this->wpcli_call( "config set {$name} {$value} --raw" );
 		}
 	}
 
-	public function set_options( string $path, array $configs ):void {
+	/**
+	 * Adds options in the array as entries in the wp-options table.
+	 *
+	 * @param array $configs Array key will be the config key, and value will match.
+	 * @return void
+	 */
+	public function set_options( array $configs ):void {
 		foreach ( $configs as $key => $value ) {
 			$key   = escapeshellarg( $key );
 			$value = escapeshellarg( $value );
 
-			$this->wpcli_call( "option add {$key} {$value}" , $path );
+			$this->wpcli_call( "option add {$key} {$value}" );
 		}
 	}
 
-	public function install( string $path, string $url, string $title, string $email, ?string $username = null, ?string $password = null ):array {
+	/**
+	 * Tells WordPress the configuration elements, then completes the '5 minute install' automagically.
+	 * set_url must be set.
+	 *
+	 * @param string      $title    WordPress site title.
+	 * @param string      $email    Administrative user email (no email is sent in this step).
+	 * @param string|null $username Different username from 'admin' if desired.
+	 * @param string|null $password Specify a password, or leave for the system to generate.
+	 * @return array
+	 */
+	public function install( string $title, string $email, ?string $username = null, ?string $password = null ):array {
 		$title    = escapeshellarg( $title );
 		$email    = escapeshellarg( $email );
 		$username = escapeshellarg( ( isset( $username ) ) ? $username : 'admin' );
@@ -124,9 +150,7 @@ class Com {
 					"--admin_email={$email}",
 					"--skip-email",
 				]
-			),
-			$path,
-			$url
+			)
 		);
 
 		return [
@@ -135,24 +159,24 @@ class Com {
 		];
 	}
 
-	public function wpcli_exportdb( string $dloc, string $directory, ?string $link = null, bool $log = true ):string {
-		$subcom = $this->wpcli_call(
-			"db tables --all-tables-with-prefix --format=csv",
-			$directory,
-			$link,
-			$log,
-			true
-		);
+	/**
+	 * Generates a database export for the specified site.
+	 *
+	 * @param string $dloc ???
+	 * @return void
+	 */
+	public function export_db( string $dloc ):void {
+		$subcom = $this->wpcli_call( "db tables --all-tables-with-prefix --format=csv", true, true );
 
-		return $this->wpcli_call(
-			"db export {$dloc} --tables=$({$subcom})",
-			$directory,
-			$link,
-			$log
-		);
+		$this->wpcli_call( "db export {$dloc} --tables=$({$subcom})" );
 	}
 
-	public function wpcli_version():string {
+	/**
+	 * Gets the WP-CLI version. Does not require path or url.
+	 *
+	 * @return string
+	 */
+	public function version():string {
 		$response = shell_exec( "{$this->wp} --version 2>&1" );
 		if ( strpos( $response, 'WP-CLI' ) !== false ) {
 			return $response;
@@ -180,9 +204,18 @@ class Com {
 		return implode( $pass );
 	}
 
-	private function wpcli_call( string $command, string $directory, ?string $link = null, bool $log = true, bool $return_command = false ):string {
-		$path = '--path=' . escapeshellarg( realpath( $directory ) );
-		$url  = ( isset( $link ) ) ? '--url=' . escapeshellarg( $link ) : null;
+	/**
+	 * The big cheese of Com. Formulate a WP-CLI shell command, executes it under the permissions of the
+	 * running user, and logs whatever is outputted from the command.
+	 *
+	 * @param string  $command        The command issued to WP-CLI.
+	 * @param boolean $log            Should Com write output to log? Default is true.
+	 * @param boolean $return_command Instead of running, return the command. Designed for nested statements.
+	 * @return string Response from shell_exec. Also written to the main log, if enabled.
+	 */
+	private function wpcli_call( string $command, bool $log = true, bool $return_command = false ):string {
+		$path = '--path=' . escapeshellarg( realpath( $this->path ) );
+		$url  = ( isset( $this->url ) ) ? '--url=' . escapeshellarg( $this->url ) : null;
 		$env  = ( ! $this->config->general->disable_env ) ? "WP_CLI_CACHE_DIR='{$this->config->directories->rootpath}/cache/'" : null;
 		$com  = "{$env} {$this->wp} {$command} {$url} {$path} --allow-root 2>&1";
 

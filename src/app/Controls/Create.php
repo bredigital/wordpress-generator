@@ -58,10 +58,11 @@ class Create extends Controls {
 	 * @param string|null $version
 	 * @return string|null URL of the new site admin panel.
 	 */
-	public function newSandbox( string $email = '', ?string $name = null, bool $useSSL = false, ?string $version = null ):?string {
+	public function newSandbox( string $email, ?string $name = null, bool $useSSL = false, ?string $version = null ):?string {
 		$id      = $this->sitelog->create( $name, $_SERVER['REMOTE_ADDR'], $useSSL );
 		$version = ( isset( $version ) ) ? $version : 'latest';
 
+		// Check if this site folder already exists.
 		$this->log->info( "Creation started for site {$id}." );
 		if ( $this->fs->exists( $id ) ) {
 			$this->log->warning( "Site {$id} already exists. Exiting." );
@@ -69,20 +70,18 @@ class Create extends Controls {
 			return null;
 		}
 
-		$id_dir     = "{$this->config->directories->rootpath}/{$id}";
-		$ssl        = ( $useSSL ) ? 'https://' : 'http://';
-		$site_owner = ( empty( $email ) ) ? "no-reply@example.com" : $email;
-		$site_name  = ( empty( $name ) ) ? "Spinup {$id}" : $name;
+		$id_dir   = "{$this->config->directories->rootpath}/{$id}";
+		$ssl      = ( $useSSL ) ? 'https://' : 'http://';
+		$site_url = "{$ssl}{$this->config->general->domain}/{$id}";
 
 		$this->fs->mkdir( "{$id_dir}/" );
-		$path = realpath( $id_dir );
-		$this->com->set_path( $path );
-		$url  = "{$ssl}{$this->config->general->domain}/{$id}";
+		$this->com->set_path( realpath( $id_dir ) );
+		$this->com->set_url( $site_url );
 
-		$this->com->download( $path, $version );
-		$this->com->create_config( $path, $id );
+		// Download and setup the requested copy of WordPress.
+		$this->com->download( $version );
+		$this->com->create_config( $id );
 		$this->com->set_configs(
-			$path,
 			[
 				'WP_DEBUG'         => 'true',
 				'WP_DEBUG_LOG'     => 'true',
@@ -90,9 +89,12 @@ class Create extends Controls {
 			]
 		);
 
-		$account = $this->com->install( $path, $url, $site_name, $site_owner );
-		$this->com->set_options( $path, [ '_wp_generator_id' => $id ] );
+		// Setup WordPress with their details, and indentify with the mu-plugin.
+		$site_name = ( empty( $name ) ) ? "Spinup {$id}" : $name;
+		$account   = $this->com->install( $site_name, $email );
+		$this->com->set_options( [ '_wp_generator_id' => $id ] );
 
+		// Copy all the plugins and themes for a new site.
 		$this->log->info( 'Copying in plugins & themes.' );
 		$this->fs->mirror( "{$this->config->directories->wordpressInstall}/mu-plugins", "{$id_dir}/wp-content/mu-plugins" );
 		$this->fs->mirror( "{$this->config->directories->wordpressInstall}/plugins", "{$id_dir}/wp-content/plugins" );
@@ -100,13 +102,14 @@ class Create extends Controls {
 
 		$this->log->info( 'Process finished.' );
 
+		// Let the site owner know their details.
 		$this->mail->sendEmailToSiteOwner(
 			(int) $id,
 			"Site '{$site_name}' Has Been Created",
 			$this->view->render(
 				'Mail/create',
 				[
-					'url'      => "{$ssl}{$this->config->general->domain}/{$id}",
+					'url'      => $site_url,
 					'username' => $account['username'],
 					'password' => $account['password'],
 				],
@@ -114,7 +117,7 @@ class Create extends Controls {
 			)
 		);
 
-		return "{$ssl}{$this->config->general->domain}/{$id}/wp-admin";
+		return "{$site_url}/wp-admin";
 	}
 
 	/**

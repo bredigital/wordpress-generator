@@ -96,8 +96,8 @@ class Export extends Controls {
 		$path  = realpath( "{$this->config->directories->rootpath}/{$id}" );
 		$dname = "dbdump-{$id}.sql";
 		$dloc  = realpath( $this->config->directories->siteExports ) . "/{$dname}";
-
-		$this->com->wpcli_exportdb( $dloc, $path );
+		$this->com->set_path( $path );
+		$this->com->export_db( $dloc );
 
 		return $dname;
 	}

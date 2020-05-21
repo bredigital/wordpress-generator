@@ -37,7 +37,7 @@ class ViewRender {
 		$variables['versions'] = [
 			'app'   => json_decode( file_get_contents( __DIR__ . '/../../composer.json' ) )->version,
 			'php'   => phpversion(),
-			'wpcli' => $this->com->wpcli_version(),
+			'wpcli' => $this->com->version(),
 		];
 
 		$content = $this->renderer->render(
