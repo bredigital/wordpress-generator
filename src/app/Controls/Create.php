@@ -73,26 +73,25 @@ class Create extends Controls {
 		$ssl        = ( $useSSL ) ? 'https://' : 'http://';
 		$site_owner = ( empty( $email ) ) ? "no-reply@example.com" : $email;
 		$site_name  = ( empty( $name ) ) ? "Spinup {$id}" : $name;
-		$site_pswd  = $this->generatePassword();
 
 		$this->fs->mkdir( "{$id_dir}/" );
 		$path = realpath( $id_dir );
+		$this->com->set_path( $path );
 		$url  = "{$ssl}{$this->config->general->domain}/{$id}";
 
-		$this->com->wpcli_call( "core download --version=\"{$version}\"", $path );
-		$this->com->wpcli_call( "config create --dbhost=\"{$this->config->database->host}:{$this->config->database->port}\" --dbname=\"{$this->config->database->database}\" --dbuser=\"{$this->config->database->user}\" --dbpass=\"{$this->config->database->password}\" --dbprefix=\"wp_t{$id}_\" --skip-check", $path );
+		$this->com->download( $path, $version );
+		$this->com->create_config( $path, $id );
+		$this->com->set_configs(
+			$path,
+			[
+				'WP_DEBUG'         => 'true',
+				'WP_DEBUG_LOG'     => 'true',
+				'WP_DEBUG_DISPLAY' => 'false',
+			]
+		);
 
-		$opts = [
-			'WP_DEBUG'         => 'true',
-			'WP_DEBUG_LOG'     => 'true',
-			'WP_DEBUG_DISPLAY' => 'false',
-		];
-		foreach ( $opts as $name => $val ) {
-			$this->com->wpcli_call( "config set {$name} {$val} --raw", $path, null, true );
-		}
-
-		$this->com->wpcli_call( "core install --title=\"{$site_name}\" --admin_user=admin --admin_password=\"{$site_pswd}\" --admin_email=\"{$site_owner}\" --skip-email", $path, $url );
-		$this->com->wpcli_call( "option add _wp_generator_id \"{$id}\"" , $path, null, true );
+		$account = $this->com->install( $path, $url, $site_name, $site_owner );
+		$this->com->set_options( $path, [ '_wp_generator_id' => $id ] );
 
 		$this->log->info( 'Copying in plugins & themes.' );
 		$this->fs->mirror( "{$this->config->directories->wordpressInstall}/mu-plugins", "{$id_dir}/wp-content/mu-plugins" );
@@ -107,9 +106,9 @@ class Create extends Controls {
 			$this->view->render(
 				'Mail/create',
 				[
-					'url'      => "http://{$this->config->general->domain}/{$id}",
-					'username' => 'admin',
-					'password' => $site_pswd,
+					'url'      => "{$ssl}{$this->config->general->domain}/{$id}",
+					'username' => $account['username'],
+					'password' => $account['password'],
 				],
 				true
 			)
@@ -131,23 +130,5 @@ class Create extends Controls {
 		$this->sitelog->setReminderStatus( $id, false );
 
 		header( "Location: http://{$this->config->general->domain}" );
-	}
-
-	/**
-	 * Generates a medium security password.
-	 *
-	 * @return string A randomly-generated password string.
-	 */
-	private function generatePassword():string {
-		$range = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890$%£@.,~?!';
-		$pass  = [];
-		$al    = strlen( $range ) - 1;
-
-		for ( $i = 0; $i < 12; $i++ ) {
-			$n      = rand( 0, $al );
-			$pass[] = $range[ $n ];
-		}
-
-		return implode( $pass );
 	}
 }

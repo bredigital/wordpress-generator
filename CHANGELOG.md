@@ -24,6 +24,7 @@ no longer available.
 - Downloadable backup link in deletion email appeared when such didn't exist.
 - System crash when using emojis in the name field (#8).
 - System crash when deleting a site with no user #1 (#7).
+- Sanitisation of shell commands (#9).
 
 ## [1.1b] - 2019-12-17
 ### Added
