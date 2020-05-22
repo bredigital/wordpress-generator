@@ -95,7 +95,7 @@ class Com
 					"--dbprefix={$site_id}",
 					"--skip-check",
 				]
-			),
+			)
 		);
 	}
 
