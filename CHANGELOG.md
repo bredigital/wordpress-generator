@@ -4,7 +4,7 @@ Adheres to [Keep a Changelog][KC], and [Semantic Versioning][SV].
 This has been migrated from Subversion to Git(Hub). Versions prior to 1.0b are
 no longer available.
 
-## Unreleased
+## [1.2b] - 2020-05-22
 ### Added
 - Sitelog table created by system when empty schema detected.
 - Version dropdown selector.
@@ -59,3 +59,4 @@ no longer available.
 [SV]:   https://semver.org/spec/v2.0.0.html
 [1.0b]: https://github.com/bredigital/wordpress-generator/releases/tag/1.0b
 [1.1b]: https://github.com/bredigital/wordpress-generator/releases/tag/1.1b
+[1.2b]: https://github.com/bredigital/wordpress-generator/releases/tag/1.2b
