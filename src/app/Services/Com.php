@@ -75,7 +75,7 @@ class Com
 	 * @param string $id Used for the prefix, generally matches the site URL.
 	 * @return void
 	 */
-	public function createConfig(string $id):void
+	public function createConfig(string $id, bool $force = false):void
 	{
 		$db_host = escapeshellarg($this->config->database->host . ':' . $this->config->database->port);
 		$db_name = escapeshellarg($this->config->database->database);
@@ -94,6 +94,7 @@ class Com
 					"--dbpass={$db_pass}",
 					"--dbprefix={$site_id}",
 					"--skip-check",
+					($force) ? "--force" : "" 
 				]
 			)
 		);
@@ -179,6 +180,17 @@ class Com
 		$subcom = $this->wpcliCall("db tables --all-tables-with-prefix --format=csv", true, true);
 
 		$this->wpcliCall("db export {$dloc} --tables=$({$subcom})");
+	}
+
+	/**
+	 * Imports a database file into the Generator.
+	 *
+	 * @param string $sqlFile A filesystem location to import.
+	 * @return void
+	 */
+	public function importDb(string $sqlFile):void
+	{
+		$this->wpcliCall("db import {$sqlFile}");
 	}
 
 	/**

@@ -52,7 +52,7 @@ class Import extends Controls
 	}
 
 	/**
-	 * Creates a new sandbox site.
+	 * Imports an existing configuration into the WordPress system.
 	 *
 	 * @param string      $email
 	 * @param string      $file
@@ -100,8 +100,14 @@ class Import extends Controls
 			$database_import[] = $file;
 		}
 
-		$this->log->info("Importing database {$database_import[0]} for site {$id}.");
-		// IMPORT DB HERE.
+		$rdir     = realpath($cacheDir . "/process-{$id}");
+		$dbfile   = realpath($database_import[0]);
+		$dbfinal  = "{$rdir}/database.sql";
+		$needle   = 'wp_t2_';
+		$haystack = "wp_t{$id}_";
+		passthru("sed s/{$needle}/{$haystack}/ {$dbfile} > {$dbfinal}");
+
+		$this->log->info("Preparing database {$database_import[0]} of site {$id} for importing.");
 
 		foreach ($database_import as $db) {
 			$this->fs->remove($db);
@@ -109,7 +115,12 @@ class Import extends Controls
 
 		$this->fs->mirror( $cacheDir . "/process-{$id}", $id_dir );
 
-		$this->log->info("Reconfiguring import of site {$id} into generator mode.");
+		// Install the database.
+		$this->log->info("Importing site {$id} database into the generator.");
+		$this->com->createConfig($id, true);
+		$this->com->importDb($id_dir . '/database.sql');
+
+		$this->log->info("Database import complete. Reconfiguring import of site {$id} into generator mode.");
 		$this->com->setConfigs(
 			[
 				'WP_DEBUG'         => 'true',
