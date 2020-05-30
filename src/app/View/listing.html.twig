@@ -15,8 +15,20 @@
 
 	<div class="row">
 		<div class="col-md-12">
-			<h2>Current Sites</h2>
-			{% include 'Segments/form.html.twig' %}
+			<ul class="nav nav-pills">
+				<li class="nav-item">
+					<a id="btnCreate" class="nav-link active" href="#">Create</a>
+				</li>
+				<li class="nav-item">
+					<a id="btnImport" class="nav-link" href="#">Import</a>
+				</li>
+			</ul>
+			<div id="frmCreate">
+				{% include 'Segments/form_create.html.twig' %}
+			</div>
+			<div id="frmImport" style="display:none">
+				{% include 'Segments/form_import.html.twig' %}
+			</div>
 		</div>
 	</div>
 
@@ -88,4 +100,8 @@
 		</div>
 	</div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" src="assets/home.js"></script>
 {% endblock %}

@@ -31,10 +31,10 @@ if ($config->general->debug) {
 	ini_set('display_errors', 1);
 }
 
-$control     = ( !empty($_GET['control']) ) ? $_GET['control'] : null;
+$control     = ( !empty($_REQUEST['control']) ) ? $_REQUEST['control'] : null;
 $id          = ( !empty($_GET['id']) ) ? $_GET['id'] : 0;
 $name        = ( !empty($_GET['name']) ) ? $_GET['name'] : null;
-$email       = ( !empty($_GET['email']) ) ? $_GET['email'] : null;
+$email       = ( !empty($_REQUEST['email']) ) ? $_REQUEST['email'] : null;
 $useSSL      = ( $config->general->sslAvailable ) ? ( !empty($_GET['secure']) ) ? (bool)$_GET['secure'] : false : false;
 $version     = ( !empty($_GET['v']) ) ? $_GET['v'] : null;
 $fulloutput  = ( isset($_GET['full']) ) ? true : false;
@@ -55,6 +55,15 @@ if ($control === null) {
 				} else {
 					echo 'An error has occurred in your request. Please see the system log for more details.';
 				}
+			}
+			break;
+		case 'create_import':
+			$import = $di->get(TWPG\Controls\Import::class);
+			$result = $import->import($email, $_FILES['archive'], $useSSL);
+			if (isset($result)) {
+				header('Location: ' . $result);
+			} else {
+				echo 'An error has occurred in your request. Please see the system log for more details.';
 			}
 			break;
 		case 'delete':

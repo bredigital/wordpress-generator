@@ -4,6 +4,10 @@ Adheres to [Keep a Changelog][KC], and [Semantic Versioning][SV].
 This has been migrated from Subversion to Git(Hub). Versions prior to 1.0b are
 no longer available.
 
+## Unreleased
+### Added
+- Ability to import a site in an archive.
+
 ## [1.2b] - 2020-05-22
 ### Added
 - Sitelog table created by system when empty schema detected.

@@ -89,6 +89,7 @@ class Configuration
 
 		return [
 			'rootpath'         => "{$root}",
+			'cache'            => "{$root}/cache",
 			'assets'           => "{$root}/assets",
 			'wordpressInstall' => "{$root}/assets/wordpress",
 			'siteExports'      => "{$root}/assets/exports"
