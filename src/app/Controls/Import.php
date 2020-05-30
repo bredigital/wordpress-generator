@@ -87,6 +87,7 @@ class Import extends Controls
 		move_uploaded_file($file["tmp_name"], $cacheDir . '/' . $filename);
 		
 		// Create a staging folder, extract ZIP and delete archive.
+		$this->log->info("Extracting archive '{$filename}' for site {$id}.");
 		$this->fs->mkdir($cacheDir . "/process-{$id}");
 		$validZip  = zip::check($cacheDir . '/' . $filename);
 		$zipstream = Zip::open($cacheDir . '/' . $filename);
@@ -99,6 +100,7 @@ class Import extends Controls
 			$database_import[] = $file;
 		}
 
+		$this->log->info("Importing database {$database_import[0]} for site {$id}.");
 		// IMPORT DB HERE.
 
 		foreach ($database_import as $db) {
@@ -107,6 +109,7 @@ class Import extends Controls
 
 		$this->fs->mirror( $cacheDir . "/process-{$id}", $id_dir );
 
+		$this->log->info("Reconfiguring import of site {$id} into generator mode.");
 		$this->com->setConfigs(
 			[
 				'WP_DEBUG'         => 'true',
