@@ -78,7 +78,7 @@ class Export extends Controls
 		$zipPath  = "{$this->config->directories->siteExports}/{$zipName}";
 
 		$zip = Zip::create($zipPath);
-		$zip->add($rootPath);
+		$zip->add($rootPath, true);
 		$zip->add("{$this->config->directories->assets}/export-readme.txt");
 
 		if ($includeDatabase) {
