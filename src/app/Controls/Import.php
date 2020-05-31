@@ -63,7 +63,7 @@ class Import extends Controls
 	{
 		$filename = $file["name"];
 		$cacheDir = $this->config->directories->cache . '/import';
-		$id       = $this->sitelog->create($filename, $_SERVER['REMOTE_ADDR'], isset($_SERVER['HTTPS']));
+		$id       = $this->sitelog->create('Importing...', $_SERVER['REMOTE_ADDR'], isset($_SERVER['HTTPS']));
 		
 		// Check if this site folder already exists.
 		$this->log->info("Creation started for site {$id}.");
@@ -81,33 +81,18 @@ class Import extends Controls
 		$this->com->setPath(realpath($id_dir));
 		$this->com->setURL($site_url);
 
-		if ( ! $this->fs->exists( $cacheDir ) ) {
-			$this->fs->mkdir( $cacheDir );
-		}
-		move_uploaded_file($file["tmp_name"], $cacheDir . '/' . $filename);
-		
-		// Create a staging folder, extract ZIP and delete archive.
-		$this->log->info("Extracting archive '{$filename}' for site {$id}.");
-		$this->fs->mkdir($cacheDir . "/process-{$id}");
-		$validZip  = zip::check($cacheDir . '/' . $filename);
-		$zipstream = Zip::open($cacheDir . '/' . $filename);
-		$zipstream->extract($cacheDir . "/process-{$id}");
-		$zipstream->close();
-		$this->fs->remove($cacheDir . '/' . $filename);
+		$this->unpackArchive($file, $id);
 
-		$name   = null;
-		$prefix = null;
+		$config = null;
 		// Check if the import is a Generator package.
 		$siteConfigLoc = "{$cacheDir}/process-{$id}/wpgen-config.json";
 		if ($this->fs->exists($siteConfigLoc)) {
-			$imp = json_decode(file_get_contents($siteConfigLoc), false);
-			$this->log->info("Generator archive (v{$imp->genver}) discovered.");
-			$name   = $imp->name;
-			$prefix = $imp->prefix;
+			$config = $this->loadGeneratorConfig($siteConfigLoc);
 		} else {
 			$this->fs->remove($cacheDir . "/process-{$id}");
 			wpgen_die('Valid archive uploaded, but was not in the supported format.');
 		}
+		$this->sitelog->updateName((int)$id, $config['name']);
 
 		$database_import = [];
 		foreach (glob($cacheDir . "/process-{$id}/*.sql") as $file) {
@@ -117,7 +102,7 @@ class Import extends Controls
 		$rdir     = realpath($cacheDir . "/process-{$id}");
 		$dbfile   = realpath($database_import[0]);
 		$dbfinal  = "{$rdir}/database.sql";
-		$input    = $prefix;
+		$input    = $config['prefix'];
 		$output   = "wp_t{$id}_";
 		passthru("sed s/{$input}/{$output}/ {$dbfile} > {$dbfinal}");
 
@@ -147,7 +132,7 @@ class Import extends Controls
 			);
 
 			// Setup WordPress with their details, and indentify with the mu-plugin.
-			$site_name = $name;
+			$site_name = $config['name'];
 			$account   = $this->com->install($site_name, $email);
 			$this->com->setOptions([ '_wp_generator_id' => $id ]);
 		} catch (Exception $e) {
@@ -179,5 +164,48 @@ class Import extends Controls
 		$this->fs->remove($cacheDir . "/process-{$id}");
 
 		return "{$site_url}/wp-admin";
+	}
+
+	/**
+	 * Unpacks the uploaded archive.
+	 *
+	 * @param array $file The desired file from the $_FILE global.
+	 * @param integer $id The sitelog ID.
+	 */
+	private function unpackArchive($file, $id)
+	{
+		$cacheDir = $this->config->directories->cache . '/import';
+		$zipFile  = $cacheDir . '/' . $file["name"];
+		$pDir     = $cacheDir . "/process-{$id}";
+ 
+		if ( ! $this->fs->exists( $cacheDir ) ) {
+			$this->fs->mkdir( $cacheDir );
+		}
+		move_uploaded_file($file["tmp_name"], $zipFile);
+		
+		// Create a staging folder, extract ZIP and delete archive.
+		$this->log->info("Extracting archive '{$file['name']}' for site {$id}.");
+		$this->fs->mkdir($pDir);
+		$validZip  = zip::check($zipFile);
+		$zipstream = Zip::open($zipFile);
+		$zipstream->extract($pDir);
+		$zipstream->close();
+		$this->fs->remove($zipFile);
+	}
+
+	/**
+	 * Loads up the generator config for WordPress Generator archives.
+	 *
+	 * @param string $siteConfigLoc Path to the config file.
+	 * @return array
+	 */
+	private function loadGeneratorConfig($siteConfigLoc) {
+		$imp = json_decode(file_get_contents($siteConfigLoc), false);
+		$this->log->info("Generator archive (v{$imp->genver}) discovered.");
+
+		return [
+			'name'   => $imp->name,
+			'prefix' => $imp->prefix,
+		];
 	}
 }
