@@ -1,6 +1,9 @@
 <?xml version="1.0"?>
 <ruleset name="main">
 	<exclude-pattern>*/src/vendor/*</exclude-pattern>
+    <exclude-pattern>*/src/node_modules/*</exclude-pattern>
+    <exclude-pattern>*/src/sites/*</exclude-pattern>
+    <exclude-pattern>*/src/cache/*</exclude-pattern>
 	<exclude-pattern>*/src/assets/exports/*</exclude-pattern>
     <exclude-pattern>*/src/assets/wordpress/*</exclude-pattern>
     <exclude-pattern>*/src/assets/generator.php</exclude-pattern>
