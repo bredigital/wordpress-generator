@@ -116,6 +116,7 @@ class Create extends Controls
 			'id'     => $id,
 			'name'   => $site_name,
 			'prefix' => "wp_t{$id}_",
+			'url'    => $site_url,
 		]));
 
 		$this->log->info('Process finished.');

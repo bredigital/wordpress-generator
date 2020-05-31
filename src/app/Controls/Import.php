@@ -92,6 +92,7 @@ class Import extends Controls
 			$this->fs->remove($cacheDir . "/process-{$id}");
 			wpgen_die('Valid archive uploaded, but was not in the supported format.');
 		}
+
 		$this->sitelog->updateName((int)$id, $config['name']);
 
 		$database_import = [];
@@ -204,8 +205,9 @@ class Import extends Controls
 		$this->log->info("Generator archive (v{$imp->genver}) discovered.");
 
 		return [
-			'name'   => $imp->name,
-			'prefix' => $imp->prefix,
+			'name'     => $imp->name,
+			'prefix'   => $imp->prefix,
+			'prev_url' => $imp->url,
 		];
 	}
 }
