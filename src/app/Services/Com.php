@@ -95,7 +95,7 @@ class Com
 					"--dbpass={$db_pass}",
 					"--dbprefix={$site_id}",
 					"--skip-check",
-					($force) ? "--force" : "" 
+					($force) ? "--force" : ""
 				]
 			)
 		);

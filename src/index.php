@@ -23,7 +23,8 @@ use TWPG\Services\Configuration;
  *
  * @param string $message The message to display to the user.
  */
-function wpgen_die(string $message):void {
+function wpgen_die(string $message):void
+{
 	(new DI\Container())->get(ViewRender::class)->render(
 		'error',
 		[

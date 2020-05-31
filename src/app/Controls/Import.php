@@ -113,7 +113,7 @@ class Import extends Controls
 			$this->fs->remove($db);
 		}
 
-		$this->fs->mirror( $cacheDir . "/process-{$id}", $id_dir );
+		$this->fs->mirror($cacheDir . "/process-{$id}", $id_dir);
 
 		// Install the database.
 		$this->log->info("Importing site {$id} database into the generator.");
@@ -179,8 +179,8 @@ class Import extends Controls
 		$zipFile  = $cacheDir . '/' . $file["name"];
 		$pDir     = $cacheDir . "/process-{$id}";
  
-		if ( ! $this->fs->exists( $cacheDir ) ) {
-			$this->fs->mkdir( $cacheDir );
+		if (! $this->fs->exists($cacheDir)) {
+			$this->fs->mkdir($cacheDir);
 		}
 		move_uploaded_file($file["tmp_name"], $zipFile);
 		
@@ -200,7 +200,8 @@ class Import extends Controls
 	 * @param string $siteConfigLoc Path to the config file.
 	 * @return array
 	 */
-	private function loadGeneratorConfig($siteConfigLoc) {
+	private function loadGeneratorConfig($siteConfigLoc)
+	{
 		$imp = json_decode(file_get_contents($siteConfigLoc), false);
 		$this->log->info("Generator archive (v{$imp->genver}) discovered.");
 
