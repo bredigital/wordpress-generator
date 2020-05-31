@@ -112,6 +112,9 @@ class Create extends Controls
 			$this->fs->remove($setfile);
 		}
 		file_put_contents($setfile, json_encode([
+			'genver' => 1,
+			'id'     => $id,
+			'name'   => $site_name,
 			'prefix' => "wp_t{$id}_",
 		]));
 

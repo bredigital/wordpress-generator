@@ -72,9 +72,8 @@ if ($control === null) {
 			}
 			break;
 		case 'create_import':
-			$prefix = ( !empty($_POST['prefix']) ) ? $_POST['prefix'] : null;
 			$import = $di->get(TWPG\Controls\Import::class);
-			$result = $import->import($email, $_FILES['archive'], $prefix);
+			$result = $import->import($email, $_FILES['archive']);
 			if (isset($result)) {
 				header('Location: ' . $result);
 			} else {

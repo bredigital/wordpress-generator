@@ -59,7 +59,7 @@ class Import extends Controls
 	 * @param string      $file
 	 * @return string|null URL of the new site admin panel.
 	 */
-	public function import(string $email, array $file, ?string $prefix = null):?string
+	public function import(string $email, array $file):?string
 	{
 		$filename = $file["name"];
 		$cacheDir = $this->config->directories->cache . '/import';
@@ -95,14 +95,18 @@ class Import extends Controls
 		$zipstream->close();
 		$this->fs->remove($cacheDir . '/' . $filename);
 
+		$name   = null;
+		$prefix = null;
+		// Check if the import is a Generator package.
 		$siteConfigLoc = "{$cacheDir}/process-{$id}/wpgen-config.json";
 		if ($this->fs->exists($siteConfigLoc)) {
-			$imp    = json_decode(file_get_contents($siteConfigLoc), false);
+			$imp = json_decode(file_get_contents($siteConfigLoc), false);
+			$this->log->info("Generator archive (v{$imp->genver}) discovered.");
+			$name   = $imp->name;
 			$prefix = $imp->prefix;
-		}
-
-		if ( empty($prefix) ) {
-			wpgen_die("No existing database prefix specified or found.");
+		} else {
+			$this->fs->remove($cacheDir . "/process-{$id}");
+			wpgen_die('Valid archive uploaded, but was not in the supported format.');
 		}
 
 		$database_import = [];
@@ -113,9 +117,9 @@ class Import extends Controls
 		$rdir     = realpath($cacheDir . "/process-{$id}");
 		$dbfile   = realpath($database_import[0]);
 		$dbfinal  = "{$rdir}/database.sql";
-		$needle   = $prefix;
-		$haystack = "wp_t{$id}_";
-		passthru("sed s/{$needle}/{$haystack}/ {$dbfile} > {$dbfinal}");
+		$input    = $prefix;
+		$output   = "wp_t{$id}_";
+		passthru("sed s/{$input}/{$output}/ {$dbfile} > {$dbfinal}");
 
 		$this->log->info("Preparing database {$database_import[0]} of site {$id} for importing.");
 
@@ -143,7 +147,7 @@ class Import extends Controls
 			);
 
 			// Setup WordPress with their details, and indentify with the mu-plugin.
-			$site_name = "Spinup {$id}";
+			$site_name = $name;
 			$account   = $this->com->install($site_name, $email);
 			$this->com->setOptions([ '_wp_generator_id' => $id ]);
 		} catch (Exception $e) {
