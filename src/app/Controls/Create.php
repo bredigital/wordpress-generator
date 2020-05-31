@@ -105,6 +105,7 @@ class Create extends Controls
 		$this->fs->mirror("{$this->config->directories->wordpressInstall}/mu-plugins", "{$id_dir}/wp-content/mu-plugins");
 		$this->fs->mirror("{$this->config->directories->wordpressInstall}/plugins", "{$id_dir}/wp-content/plugins");
 		$this->fs->mirror("{$this->config->directories->wordpressInstall}/themes", "{$id_dir}/wp-content/themes");
+		$this->fs->copy("{$this->config->directories->assets}/generator.php", "{$id_dir}/wp-content/mu-plugins/generator.php");
 
 		$this->log->info('Process finished.');
 

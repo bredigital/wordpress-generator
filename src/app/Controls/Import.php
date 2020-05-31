@@ -137,8 +137,7 @@ class Import extends Controls
 
 		// Copy all the plugins and themes for a new site.
 		$this->log->info('Copying in generator plugin.');
-		$plugin = '/mu-plugins/generator.php';
-		$this->fs->copy("{$this->config->directories->wordpressInstall}{$plugin}", "{$id_dir}/wp-content{$plugin}");
+		$this->fs->copy("{$this->config->directories->assets}/generator.php", "{$id_dir}/wp-content/mu-plugins/generator.php");
 
 		$this->log->info('Process finished.');
 
