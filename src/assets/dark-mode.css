@@ -18,3 +18,16 @@
 [data-theme="dark"] .table {
   color: #eee;
 }
+
+[data-theme="dark"] .table {
+  color: #eee;
+}
+
+[data-theme="dark"] .modal-content {
+  background-color: #131313;
+}
+
+[data-theme="dark"] .close {
+  color: #eee;
+  text-shadow: none;
+}

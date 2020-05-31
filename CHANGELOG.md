@@ -16,6 +16,7 @@ no longer available.
 - Sites now sit within a subfolder.
 - Missing filesystem files shown on listings.
 - SQL export cleared after export package is built.
+- Form on homepage now moved into modal windows.
 
 ### Removed
 - HTTPS toggle, it is now detected automatically.

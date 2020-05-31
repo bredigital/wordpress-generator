@@ -1,18 +1,34 @@
-<form role="form" action="index.php" method="POST" enctype="multipart/form-data">
-	<input name="control" type="hidden" value="create_import">
-	<div class="form-group">
-		<label for="email">Your email</label>
-		<input name="email" type="email" placeholder="joe.bloggs@example.com" class="form-control" required />
-	</div>
-	<div class="form-group">
-		<label for="uplBackup">Your backup file</label>
-		<div class="custom-file">
-			<input type="file" class="custom-file-input" id="uplBackup" name="archive" accept=".zip" required />
-			<label class="custom-file-label" for="uplBackup">Upload an archive</label>
-			<p>Accepted imports are: WordPress Generator.</p>
-		</div>
-	</div>
-	<br>
-	<p><em>Login details will be emailed to you.</em></p>
-	<button type="submit" class="btn btn-primary" value="Create" id="btnImportNew">Submit</button>
-</form>
+<div class="modal" id="modImport" tabindex="-1" role="dialog" aria-labelledby="modImportLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<form role="form" action="index.php" method="POST" enctype="multipart/form-data">
+				<div class="modal-header">
+					<h5 class="modal-title" id="modImportLabel">Import sandbox</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div> <!-- .modal-header -->
+				<div class="modal-body">
+					<input name="control" type="hidden" value="create_import">
+					<div class="form-group">
+						<label for="email">Your email</label>
+						<input name="email" type="email" placeholder="joe.bloggs@example.com" class="form-control" required />
+					</div>
+					<div class="form-group">
+						<label for="uplBackup">Your backup file</label>
+						<div class="custom-file">
+							<input type="file" class="custom-file-input" id="uplBackup" name="archive" accept=".zip" required />
+							<label class="custom-file-label" for="uplBackup">Upload an archive</label>
+							<p>Accepted imports are: WordPress Generator.</p>
+						</div>
+					</div>
+					<br>
+					<p><em>Login details will be emailed to you.</em></p>
+				</div> <!-- .modal-body -->
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-primary" value="Create" id="btnImportNew">Submit</button>
+				</div>
+			</form>
+		</div> <!-- .modal-content -->
+	</div> <!-- .modal-dialog -->
+</div> <!-- #exampleModal -->

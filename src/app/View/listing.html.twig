@@ -13,28 +13,14 @@
 		</div>
 	</div>
 
-	<div class="row">
-		<div class="col-md-12">
-			<ul class="nav nav-pills">
-				<li class="nav-item">
-					<a id="btnCreate" class="nav-link active" href="#">Create</a>
-				</li>
-				<li class="nav-item">
-					<a id="btnImport" class="nav-link" href="#">Import</a>
-				</li>
-			</ul>
-			<div id="frmCreate">
-				{% include 'Segments/form_create.html.twig' %}
-			</div>
-			<div id="frmImport" style="display:none">
-				{% include 'Segments/form_import.html.twig' %}
-			</div>
-		</div>
-	</div>
+	{% include 'Segments/form_create.html.twig' %}
+	{% include 'Segments/form_import.html.twig' %}
 
 	<div class="row">
 		<div class="col-md-12">
 			<p>
+				<button type="button" class="btn btn-info" data-toggle="modal" data-target="#modCreate">Create</button>
+				<button type="button" class="btn btn-info" data-toggle="modal" data-target="#modImport">Import</button>
 				<a class="btn btn-info" href="index.php?control=log">System log</a>
 			</p>
 		</div>
