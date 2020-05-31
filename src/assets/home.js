@@ -1,4 +1,13 @@
 window.onload = function() {
+	$newmsg = 'WARNING: All sites generated begin with a 60 day expiry. It is your responsibility to ensure the site remains active as long as it is needed, otherwise it will be automatically pruned.';
+	document.getElementById("btnCreateNew").onclick = function(e) {
+		return confirm($newmsg);
+	}
+	
+	document.getElementById("btnImportNew").onclick = function(e) {
+		return confirm($newmsg);
+	}
+	
 	objCreate = [ document.getElementById("frmCreate"), document.getElementById("btnCreate") ];
 	objImport = [ document.getElementById("frmImport"), document.getElementById("btnImport") ];
 	document.getElementById("btnCreate").onclick = function(e) {

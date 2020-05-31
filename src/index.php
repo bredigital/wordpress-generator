@@ -44,11 +44,13 @@ if ($control === null) {
 	switch ($control) {
 		case 'create':
 		case 'extend':
-			$create = $di->get(TWPG\Controls\Create::class);
-			if ($control == 'extend') {
+			$wpVersion = ( $version === 'other' ) ? $_GET['vnum'] : null;
+			$version   = ( $version === 'other' ) ? null : $version;
+			$create    = $di->get(TWPG\Controls\Create::class);
+			if ($control === 'extend') {
 				$create->extend($_GET["id"]);
 			} else {
-				$result = $create->newSandbox($email, $name, $version);
+				$result = $create->newSandbox($email, $name, (!empty($wpVersion)) ? $wpVersion : $version);
 				if (isset($result)) {
 					header('Location: ' . $result);
 				} else {

@@ -8,6 +8,7 @@ no longer available.
 ### Added
 - Ability to import a site in an archive.
 - Dark mode toggle.
+- User can specify what version of WordPress they download.
 
 ### Changed
 - npm is used for JavaScript dependencies.

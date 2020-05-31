@@ -8,15 +8,20 @@
 		<label for="name">Site Title</label>
 		<input name="name" type="text" placeholder="Optional" class="form-control" />
 	</div>
-	<div class="form-group">
-		<label for="v">Version</label>
-		<select class="form-control" name="v">
-			<option>latest</option>
-			<option>nightly</option>
-		</select>
+	<div class="form-group row">
+		<div class="col-sm-8">
+			<label for="v" id="selVersion">Version</label>
+			<select class="form-control" name="v">
+				<option>latest</option>
+				<option>nightly</option>
+				<option value="other">other...</option>
+			</select>
+		</div>
+		<div class="col-sm-4" id="txtVersionNo">
+			<label for="vnum">Version Number (if other)</label>
+			<input name="vnum" type="text" placeholder="4.2.1" class="form-control" />
+		</div>
 	</div>
 	<p><em>Login details will be emailed to you.</em></p>
-	<button type="submit" class="btn btn-primary" value="Create" onclick="return confirm('WARNING: All sites generated begin with a 60 day expiry. It is your responsibility to ensure the site remains active as long as it is needed, otherwise it will be automatically pruned.')">
-		Submit
-	</button>
+	<button type="submit" class="btn btn-primary" value="Create" id="btnCreateNew">Submit</button>
 </form>
