@@ -55,13 +55,12 @@ class Create extends Controls
 	 *
 	 * @param string      $email
 	 * @param string      $name
-	 * @param boolean     $useSSL
 	 * @param string|null $version
 	 * @return string|null URL of the new site admin panel.
 	 */
-	public function newSandbox(string $email, ?string $name = null, bool $useSSL = false, ?string $version = null):?string
+	public function newSandbox(string $email, ?string $name = null, ?string $version = null):?string
 	{
-		$id      = $this->sitelog->create($name, $_SERVER['REMOTE_ADDR'], $useSSL);
+		$id      = $this->sitelog->create($name, $_SERVER['REMOTE_ADDR'], isset($_SERVER['HTTPS']));
 		$version = ( isset($version) ) ? $version : 'latest';
 
 		// Check if this site folder already exists.
@@ -73,7 +72,7 @@ class Create extends Controls
 		}
 
 		$id_dir   = "{$this->config->directories->sites}/{$id}";
-		$ssl      = ( $useSSL ) ? 'https://' : 'http://';
+		$ssl      = ( isset($_SERVER['HTTPS']) ) ? 'https://' : 'http://';
 		$site_url = "{$ssl}{$this->config->general->domainSites}/{$id}";
 
 		$this->fs->mkdir("{$id_dir}/");

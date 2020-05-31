@@ -46,7 +46,6 @@ class Configuration
 			'domain'         => $this->getEnv('GN_DOMAIN'),
 			'domainSites'    => $this->getEnv('GN_DOMAIN') . '/sites',
 			'debug'          => $this->getEnvBoolean('GN_DEBUG'),
-			'sslAvailable'   => $this->getEnvBoolean('GN_SSL_AVAILABLE'),
 			'rootDir'        => __DIR__ . '/../..',
 			'system_wp'      => $this->getEnvBoolean('GN_SYSTEM_WPCLI'),
 			'custom_wp_path' => $this->getEnv('GN_WPCLI', 'wp'),

@@ -56,14 +56,13 @@ class Import extends Controls
 	 *
 	 * @param string      $email
 	 * @param string      $file
-	 * @param boolean     $useSSL
 	 * @return string|null URL of the new site admin panel.
 	 */
-	public function import(string $email, array $file = null, bool $useSSL = false):?string
+	public function import(string $email, array $file = null):?string
 	{
 		$filename = $file["name"];
 		$cacheDir = $this->config->directories->cache . '/import';
-		$id       = $this->sitelog->create($filename, $_SERVER['REMOTE_ADDR'], $useSSL);
+		$id       = $this->sitelog->create($filename, $_SERVER['REMOTE_ADDR'], isset($_SERVER['HTTPS']));
 		
 		// Check if this site folder already exists.
 		$this->log->info("Creation started for site {$id}.");
@@ -74,7 +73,7 @@ class Import extends Controls
 		}
 
 		$id_dir   = "{$this->config->directories->sites}/{$id}";
-		$ssl      = ( $useSSL ) ? 'https://' : 'http://';
+		$ssl      = ( isset($_SERVER['HTTPS']) ) ? 'https://' : 'http://';
 		$site_url = "{$ssl}{$this->config->general->domainSites}/{$id}";
 
 		$this->fs->mkdir("{$id_dir}/");

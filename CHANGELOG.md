@@ -14,6 +14,9 @@ no longer available.
 - Sites now sit within a subfolder.
 - Missing filesystem files shown on listings.
 
+### Removed
+- HTTPS toggle, it is now detected automatically.
+
 ## [1.2b] - 2020-05-22
 ### Added
 - Sitelog table created by system when empty schema detected.

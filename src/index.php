@@ -35,7 +35,6 @@ $control     = ( !empty($_REQUEST['control']) ) ? $_REQUEST['control'] : null;
 $id          = ( !empty($_GET['id']) ) ? $_GET['id'] : 0;
 $name        = ( !empty($_GET['name']) ) ? $_GET['name'] : null;
 $email       = ( !empty($_REQUEST['email']) ) ? $_REQUEST['email'] : null;
-$useSSL      = ( $config->general->sslAvailable ) ? ( !empty($_GET['secure']) ) ? (bool)$_GET['secure'] : false : false;
 $version     = ( !empty($_GET['v']) ) ? $_GET['v'] : null;
 $fulloutput  = ( isset($_GET['full']) ) ? true : false;
 
@@ -49,7 +48,7 @@ if ($control === null) {
 			if ($control == 'extend') {
 				$create->extend($_GET["id"]);
 			} else {
-				$result = $create->newSandbox($email, $name, $useSSL, $version);
+				$result = $create->newSandbox($email, $name, $version);
 				if (isset($result)) {
 					header('Location: ' . $result);
 				} else {
@@ -59,7 +58,7 @@ if ($control === null) {
 			break;
 		case 'create_import':
 			$import = $di->get(TWPG\Controls\Import::class);
-			$result = $import->import($email, $_FILES['archive'], $useSSL);
+			$result = $import->import($email, $_FILES['archive']);
 			if (isset($result)) {
 				header('Location: ' . $result);
 			} else {
