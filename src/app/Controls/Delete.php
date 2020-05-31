@@ -84,7 +84,7 @@ class Delete extends Controls
 		);
 
 		$this->sitelog->purge($id, ( $cron ) ? 'CRON' : $_SERVER['REMOTE_ADDR']);
-		$this->fs->remove([ $id ]);
+		$this->fs->remove("{$this->config->directories->sites}/{$id}");
 
 		$this->log->info("Site {$id} deletion successful.");
 
