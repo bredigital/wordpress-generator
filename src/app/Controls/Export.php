@@ -73,7 +73,7 @@ class Export extends Controls
 	{
 		$this->log->info("Exporting {$id} filesystem.");
 
-		$rootPath = "{$this->config->directories->rootpath}/{$id}";
+		$rootPath = "{$this->config->directories->sites}/{$id}";
 		$zipName  = "export-site-{$id}.zip";
 		$zipPath  = "{$this->config->directories->siteExports}/{$zipName}";
 
@@ -99,7 +99,7 @@ class Export extends Controls
 	{
 		$this->log->info("Exporting {$id} database.");
 
-		$path  = realpath("{$this->config->directories->rootpath}/{$id}");
+		$path  = realpath("{$this->config->directories->sites}/{$id}");
 		$dname = "dbdump-{$id}.sql";
 		$dloc  = realpath($this->config->directories->siteExports) . "/{$dname}";
 		$this->com->setPath($path);

@@ -44,6 +44,7 @@ class Configuration
 	{
 		return [
 			'domain'         => $this->getEnv('GN_DOMAIN'),
+			'domainSites'    => $this->getEnv('GN_DOMAIN') . '/sites',
 			'debug'          => $this->getEnvBoolean('GN_DEBUG'),
 			'sslAvailable'   => $this->getEnvBoolean('GN_SSL_AVAILABLE'),
 			'rootDir'        => __DIR__ . '/../..',
@@ -89,6 +90,7 @@ class Configuration
 
 		return [
 			'rootpath'         => "{$root}",
+			'sites'            => "{$root}/sites",
 			'cache'            => "{$root}/cache",
 			'assets'           => "{$root}/assets",
 			'wordpressInstall' => "{$root}/assets/wordpress",

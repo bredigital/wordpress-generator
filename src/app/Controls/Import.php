@@ -73,9 +73,9 @@ class Import extends Controls
 			return null;
 		}
 
-		$id_dir   = "{$this->config->directories->rootpath}/{$id}";
+		$id_dir   = "{$this->config->directories->sites}/{$id}";
 		$ssl      = ( $useSSL ) ? 'https://' : 'http://';
-		$site_url = "{$ssl}{$this->config->general->domain}/{$id}";
+		$site_url = "{$ssl}{$this->config->general->domainSites}/{$id}";
 
 		$this->fs->mkdir("{$id_dir}/");
 		$this->com->setPath(realpath($id_dir));

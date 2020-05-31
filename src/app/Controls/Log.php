@@ -44,7 +44,7 @@ class Log extends Controls
 				}
 			}
 		} else {
-			$content =  "{$this->config->directories->rootpath}/$id/wp-content/debug.log";
+			$content =  "{$this->config->directories->sites}/$id/wp-content/debug.log";
 			if ($this->fs->exists($content)) {
 				$logContents = file_get_contents($content);
 			}

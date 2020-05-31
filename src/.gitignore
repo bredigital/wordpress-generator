@@ -1,6 +1,4 @@
-[0-9]
-[0-9][0-9]
-[0-9][0-9][0-9]
+sites/*
 vendor/
 node_modules/
 cache/*

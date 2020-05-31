@@ -11,6 +11,7 @@ no longer available.
 
 ### Changed
 - npm is used for JavaScript dependencies.
+- Sites now sit within a subfolder.
 
 ## [1.2b] - 2020-05-22
 ### Added

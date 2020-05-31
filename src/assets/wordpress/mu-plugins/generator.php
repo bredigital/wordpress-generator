@@ -17,7 +17,7 @@
 
 use Carbon\Carbon;
 
-$comp_path = __DIR__ . '/../../../vendor/autoload.php';
+$comp_path = __DIR__ . '/../../../../vendor/autoload.php';
 $table     = $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE %s", 'wpmgr_sitelog' ) );
 
 if ( file_exists( $comp_path ) && ! empty( $table ) ) {
