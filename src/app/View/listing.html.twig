@@ -58,7 +58,8 @@
 							<tr>
 								<td class='sitetable name'>
 									{{ listing.name|raw }}
-									{% if listing.dbExists == false %} - <span style="color:#ff6e6e;font-style:italic" title="The MySQL database referenced to does not exist.">Missing Database</span>{% endif %}
+									{% if listing.dbExists == false %} - <span style="color:#ff6e6e;font-style:italic">Missing database</span>{% endif %}
+									{% if listing.fsExists == false %} - <span style="color:#ff6e6e;font-style:italic">Missing filesystem</span>{% endif %}
 								</td>
 								<td class='sitetable url'><a href='{{ listing.urls.site }}'>{{ listing.urls.site }}</a></td>
 								<td class='sitetable version'>{{ listing.version|default('Unknown') }}</td>
