@@ -58,8 +58,13 @@
 							<tr>
 								<td class='sitetable name'>
 									{{ listing.name|raw }}
-									{% if listing.dbExists == false %} - <span style="color:#ff6e6e;font-style:italic">Missing database</span>{% endif %}
-									{% if listing.fsExists == false %} - <span style="color:#ff6e6e;font-style:italic">Missing filesystem</span>{% endif %}
+									{% if listing.dbExists == false and listing.fsExists == false %}
+									<span class="badge badge-warning">Missing system</span>
+									{% elseif listing.dbExists == false %}
+									<span class="badge badge-secondary">Missing database</span>
+									{% elseif listing.fsExists == false %}
+									<span class="badge badge-secondary">Missing filesystem</span>
+									{% endif %}
 								</td>
 								<td class='sitetable url'><a href='{{ listing.urls.site }}'>{{ listing.urls.site }}</a></td>
 								<td class='sitetable version'>{{ listing.version|default('Unknown') }}</td>
