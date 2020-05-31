@@ -19,6 +19,7 @@ use TWPG\Models\Sitelog;
 
 use Symfony\Component\Filesystem\Filesystem;
 use Comodojo\Zip\Zip;
+use Exception;
 
 /**
  * Import existing WordPress sites into the generator.
@@ -58,7 +59,7 @@ class Import extends Controls
 	 * @param string      $file
 	 * @return string|null URL of the new site admin panel.
 	 */
-	public function import(string $email, array $file, string $prefix):?string
+	public function import(string $email, array $file, ?string $prefix = null):?string
 	{
 		$filename = $file["name"];
 		$cacheDir = $this->config->directories->cache . '/import';
@@ -94,6 +95,16 @@ class Import extends Controls
 		$zipstream->close();
 		$this->fs->remove($cacheDir . '/' . $filename);
 
+		$siteConfigLoc = "{$cacheDir}/process-{$id}/wpgen-config.json";
+		if ($this->fs->exists($siteConfigLoc)) {
+			$imp    = json_decode(file_get_contents($siteConfigLoc), false);
+			$prefix = $imp->prefix;
+		}
+
+		if ( empty($prefix) ) {
+			wpgen_die("No existing database prefix specified or found.");
+		}
+
 		$database_import = [];
 		foreach (glob($cacheDir . "/process-{$id}/*.sql") as $file) {
 			$database_import[] = $file;
@@ -116,24 +127,28 @@ class Import extends Controls
 
 		// Install the database.
 		$this->log->info("Importing site {$id} database into the generator.");
-		$this->com->createConfig($id, true);
-		$this->com->importDb($id_dir . '/database.sql');
+		try {
+			$this->com->createConfig($id, true);
+			$this->com->importDb($id_dir . '/database.sql');
 
-		$this->log->info("Database import complete. Reconfiguring import of site {$id} into generator mode.");
-		$this->com->setConfigs(
-			[
-				'WP_HOME'          => "'{$site_url}'",
-				'WP_SITEURL'       => "'{$site_url}'",
-				'WP_DEBUG'         => 'true',
-				'WP_DEBUG_LOG'     => 'true',
-				'WP_DEBUG_DISPLAY' => 'false',
-			]
-		);
+			$this->log->info("Database import complete. Reconfiguring import of site {$id} into generator mode.");
+			$this->com->setConfigs(
+				[
+					'WP_HOME'          => "'{$site_url}'",
+					'WP_SITEURL'       => "'{$site_url}'",
+					'WP_DEBUG'         => 'true',
+					'WP_DEBUG_LOG'     => 'true',
+					'WP_DEBUG_DISPLAY' => 'false',
+				]
+			);
 
-		// Setup WordPress with their details, and indentify with the mu-plugin.
-		$site_name = "Spinup {$id}";
-		$account   = $this->com->install($site_name, $email);
-		$this->com->setOptions([ '_wp_generator_id' => $id ]);
+			// Setup WordPress with their details, and indentify with the mu-plugin.
+			$site_name = "Spinup {$id}";
+			$account   = $this->com->install($site_name, $email);
+			$this->com->setOptions([ '_wp_generator_id' => $id ]);
+		} catch (Exception $e) {
+			wpgen_die($e->getMessage());
+		}
 
 		// Copy all the plugins and themes for a new site.
 		$this->log->info('Copying in generator plugin.');

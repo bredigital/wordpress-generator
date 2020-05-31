@@ -107,6 +107,14 @@ class Create extends Controls
 		$this->fs->mirror("{$this->config->directories->wordpressInstall}/themes", "{$id_dir}/wp-content/themes");
 		$this->fs->copy("{$this->config->directories->assets}/generator.php", "{$id_dir}/wp-content/mu-plugins/generator.php");
 
+		$setfile = "{$id_dir}/wpgen-config.json";
+		if ($this->fs->exists($setfile)) {
+			$this->fs->remove($setfile);
+		}
+		file_put_contents($setfile, json_encode([
+			'prefix' => "wp_t{$id}_",
+		]));
+
 		$this->log->info('Process finished.');
 
 		// Let the site owner know their details.

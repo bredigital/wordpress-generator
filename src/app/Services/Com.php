@@ -129,7 +129,7 @@ class Com
 			$key   = escapeshellarg($key);
 			$value = escapeshellarg($value);
 
-			$this->wpcliCall("option add {$key} {$value}");
+			$this->wpcliCall("option update {$key} {$value}");
 		}
 	}
 
