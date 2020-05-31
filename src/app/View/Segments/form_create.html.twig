@@ -1,43 +1,35 @@
-<div class="modal" id="modCreate" tabindex="-1" role="dialog" aria-labelledby="modCreateLabel" aria-hidden="true">
-	<div class="modal-dialog" role="document">
-		<div class="modal-content">
-			<form role="form" action="index.php" method="GET">
-				<div class="modal-header">
-					<h5 class="modal-title" id="modCreateLabel">Create sandbox</h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-				<div class="modal-body">
-					<input name="control" type="hidden" value="create">
-					<div class="form-group">
-						<label for="email">Your email</label>
-						<input name="email" type="email" placeholder="joe.bloggs@example.com" class="form-control" required />
-					</div>
-					<div class="form-group">
-						<label for="name">Site Title</label>
-						<input name="name" type="text" placeholder="Optional" class="form-control" />
-					</div>
-					<div class="form-group row">
-						<div class="col-sm-8">
-							<label for="v" id="selVersion">Version</label>
-							<select class="form-control" name="v">
-								<option>latest</option>
-								<option>nightly</option>
-								<option value="other">other...</option>
-							</select>
-						</div>
-						<div class="col-sm-4" id="txtVersionNo">
-							<label for="vnum">Version No.</label>
-							<input name="vnum" type="text" placeholder="4.2.1" class="form-control" />
-						</div>
-					</div>
-					<p><em>Login details will be emailed to you.</em></p>	
-				</div> <!-- .modal-body -->
-				<div class="modal-footer">
-					<button type="submit" class="btn btn-primary" value="Create" id="btnCreateNew">Submit</button>	
-				</div>
-			</form>
-		</div> <!-- .modal-content -->
-	</div> <!-- .modal-dialog -->
-</div> <!-- #exampleModal -->
+{% extends "Segments/modal.html.twig" %}
+
+{% block content %}
+<form role="form" action="index.php" method="GET">
+	<div class="modal-body">
+		<input name="control" type="hidden" value="create">
+		<div class="form-group">
+			<label for="email">Your email</label>
+			<input name="email" type="email" placeholder="joe.bloggs@example.com" class="form-control" required />
+		</div>
+		<div class="form-group">
+			<label for="name">Site Title</label>
+			<input name="name" type="text" placeholder="Optional" class="form-control" />
+		</div>
+		<div class="form-group row">
+			<div class="col-sm-8">
+				<label for="v" id="selVersion">Version</label>
+				<select class="form-control" name="v">
+					<option>latest</option>
+					<option>nightly</option>
+					<option value="other">other...</option>
+				</select>
+			</div>
+			<div class="col-sm-4" id="txtVersionNo">
+				<label for="vnum">Version No.</label>
+				<input name="vnum" type="text" placeholder="4.2.1" class="form-control" />
+			</div>
+		</div>
+		<p><em>Login details will be emailed to you.</em></p>	
+	</div> <!-- .modal-body -->
+	<div class="modal-footer">
+		<button type="submit" class="btn btn-primary" value="Create" id="btnCreateNew">Submit</button>	
+	</div>
+</form>
+{% endblock %}

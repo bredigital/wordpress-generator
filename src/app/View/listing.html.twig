@@ -13,8 +13,8 @@
 		</div>
 	</div>
 
-	{% include 'Segments/form_create.html.twig' %}
-	{% include 'Segments/form_import.html.twig' %}
+	{% include 'Segments/form_create.html.twig' with {'modalId': 'modCreate', 'modalTitle': 'Create sandbox'} %}
+	{% include 'Segments/form_import.html.twig' with {'modalId': 'modImport', 'modalTitle': 'Import sandbox'} %}
 
 	<div class="row">
 		<div class="col-md-12">
