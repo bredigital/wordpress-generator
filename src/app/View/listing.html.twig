@@ -61,9 +61,9 @@
 									{% if listing.dbExists == false and listing.fsExists == false %}
 									<span class="badge badge-warning">Missing system</span>
 									{% elseif listing.dbExists == false %}
-									<span class="badge badge-secondary">Missing database</span>
+									<span class="badge badge-warning">Missing database</span>
 									{% elseif listing.fsExists == false %}
-									<span class="badge badge-secondary">Missing filesystem</span>
+									<span class="badge badge-warning">Missing filesystem</span>
 									{% endif %}
 								</td>
 								<td class='sitetable url'><a href='{{ listing.urls.site }}'>{{ listing.urls.site }}</a></td>
