@@ -9,6 +9,7 @@
 
 namespace TWPG\Services;
 
+use Exception;
 use TWPG\Services\Configuration;
 use TWPG\Services\SystemLog;
 
@@ -232,6 +233,7 @@ class Com
 	 * The big cheese of Com. Formulate a WP-CLI shell command, executes it under the permissions of the
 	 * running user, and logs whatever is outputted from the command.
 	 *
+	 * @throws Exception if the reply from the shell command contains an error.
 	 * @param string  $command        The command issued to WP-CLI.
 	 * @param boolean $log            Should Com write output to log? Default is true.
 	 * @param boolean $return_command Instead of running, return the command. Designed for nested statements.
@@ -250,10 +252,15 @@ class Com
 
 		$response = shell_exec($com);
 
-		if ($log) {
-			$this->log->info('WP-CLI responded with: ' . $response);
-		}
+		if (strpos($response, 'Error:') === false) {
+			if ($log) {
+				$this->log->info('WP-CLI responded with: ' . $response);
+			}
 
-		return $response;
+			return $response;
+		} else {
+			$this->log->error('WP-CLI responded with: ' . $response);
+			throw new Exception('WP-CLI responded with an error. Check the logs for the output.');
+		}
 	}
 }

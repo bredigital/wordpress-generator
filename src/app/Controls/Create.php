@@ -9,6 +9,7 @@
 
 namespace TWPG\Controls;
 
+use Exception;
 use TWPG\Controls\Controls;
 use TWPG\Services\Configuration;
 use TWPG\Services\SystemLog;
@@ -75,25 +76,29 @@ class Create extends Controls
 		$ssl      = ( isset($_SERVER['HTTPS']) ) ? 'https://' : 'http://';
 		$site_url = "{$ssl}{$this->config->general->domainSites}/{$id}";
 
-		$this->fs->mkdir("{$id_dir}/");
-		$this->com->setPath(realpath($id_dir));
-		$this->com->setURL($site_url);
+		try {
+			$this->fs->mkdir("{$id_dir}/");
+			$this->com->setPath(realpath($id_dir));
+			$this->com->setURL($site_url);
 
-		// Download and setup the requested copy of WordPress.
-		$this->com->download($version);
-		$this->com->createConfig($id);
-		$this->com->setConfigs(
-			[
-				'WP_DEBUG'         => 'true',
-				'WP_DEBUG_LOG'     => 'true',
-				'WP_DEBUG_DISPLAY' => 'false',
-			]
-		);
+			// Download and setup the requested copy of WordPress.
+			$this->com->download($version);
+			$this->com->createConfig($id);
+			$this->com->setConfigs(
+				[
+					'WP_DEBUG'         => 'true',
+					'WP_DEBUG_LOG'     => 'true',
+					'WP_DEBUG_DISPLAY' => 'false',
+				]
+			);
 
-		// Setup WordPress with their details, and indentify with the mu-plugin.
-		$site_name = ( empty($name) ) ? "Spinup {$id}" : $name;
-		$account   = $this->com->install($site_name, $email);
-		$this->com->setOptions([ '_wp_generator_id' => $id ]);
+			// Setup WordPress with their details, and indentify with the mu-plugin.
+			$site_name = ( empty($name) ) ? "Spinup {$id}" : $name;
+			$account   = $this->com->install($site_name, $email);
+			$this->com->setOptions([ '_wp_generator_id' => $id ]);
+		} catch (Exception $e) {
+			die($e->getMessage());
+		}
 
 		// Copy all the plugins and themes for a new site.
 		$this->log->info('Copying in plugins & themes.');
