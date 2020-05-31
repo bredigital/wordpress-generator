@@ -15,7 +15,26 @@ if (file_exists(__DIR__ . '/vendor/autoload.php')) {
 	die();
 }
 
+use TWPG\Services\ViewRender;
 use TWPG\Services\Configuration;
+
+/**
+ * Handles system stops with a visual-friendly page.
+ *
+ * @param string $message The message to display to the user.
+ */
+function wpgen_die(string $message):void {
+	(new DI\Container())->get(ViewRender::class)->render(
+		'error',
+		[
+			'page_title' => 'System error',
+			'message'    => $message,
+			'return_url' => (new Configuration())->general->domain,
+			'log_url'    => (new Configuration())->general->domain . '/index.php?control=log',
+		]
+	);
+	die();
+}
 
 $di       = new DI\Container();
 $config   = new Configuration();
@@ -48,7 +67,7 @@ if ($control === null) {
 			$version   = ( $version === 'other' ) ? null : $version;
 			$create    = $di->get(TWPG\Controls\Create::class);
 			if ($control === 'extend') {
-				$create->extend($_GET["id"]);
+				$create->extend($id);
 			} else {
 				$result = $create->newSandbox($email, $name, (!empty($wpVersion)) ? $wpVersion : $version);
 				if (isset($result)) {

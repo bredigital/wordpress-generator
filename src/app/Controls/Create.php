@@ -97,7 +97,7 @@ class Create extends Controls
 			$account   = $this->com->install($site_name, $email);
 			$this->com->setOptions([ '_wp_generator_id' => $id ]);
 		} catch (Exception $e) {
-			die($e->getMessage());
+			wpgen_die($e->getMessage());
 		}
 
 		// Copy all the plugins and themes for a new site.

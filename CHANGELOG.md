@@ -9,6 +9,7 @@ no longer available.
 - Ability to import a site in an archive.
 - Dark mode toggle.
 - User can specify what version of WordPress they download.
+- Handled system errors now display visually, rather than a white screen.
 
 ### Changed
 - npm is used for JavaScript dependencies.

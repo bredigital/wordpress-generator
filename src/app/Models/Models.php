@@ -43,7 +43,7 @@ class Models
 				);
 		} catch (Exception $e) {
 			$this->log->error("A database error occurred: ({$e->getCode()}) {$e->getMessage()}");
-			die('A system error has occurred. Please check the logs to discover why.');
+			wpgen_die("A database communication error has occurred. {$e->getMessage()}.");
 		}
 	}
 
