@@ -54,9 +54,9 @@ class Create extends Controls
 	/**
 	 * Creates a new sandbox site.
 	 *
-	 * @param string      $email
-	 * @param string      $name
-	 * @param string|null $version
+	 * @param string      $email   Admin email and contact by the system.
+	 * @param string      $name    Site alias.
+	 * @param string|null $version Specific version of WordPress, if desired.
 	 * @return string|null URL of the new site admin panel.
 	 */
 	public function newSandbox(string $email, ?string $name = null, ?string $version = null):?string
@@ -100,24 +100,9 @@ class Create extends Controls
 			wpgen_die($e->getMessage());
 		}
 
-		// Copy all the plugins and themes for a new site.
-		$this->log->info('Copying in plugins & themes.');
-		$this->fs->mirror("{$this->config->directories->wordpressInstall}/mu-plugins", "{$id_dir}/wp-content/mu-plugins");
-		$this->fs->mirror("{$this->config->directories->wordpressInstall}/plugins", "{$id_dir}/wp-content/plugins");
-		$this->fs->mirror("{$this->config->directories->wordpressInstall}/themes", "{$id_dir}/wp-content/themes");
-		$this->fs->copy("{$this->config->directories->assets}/generator.php", "{$id_dir}/wp-content/mu-plugins/generator.php");
-
-		$setfile = "{$id_dir}/wpgen-config.json";
-		if ($this->fs->exists($setfile)) {
-			$this->fs->remove($setfile);
-		}
-		file_put_contents($setfile, json_encode([
-			'genver' => 1,
-			'id'     => $id,
-			'name'   => $site_name,
-			'prefix' => "wp_t{$id}_",
-			'url'    => $site_url,
-		]));
+		// Copy all the plugins and themes for a new site, and drop a generator config file.
+		$this->copySetupFiles($id);
+		$this->setSiteGenConfig($id, $site_name, $site_url);
 
 		$this->log->info('Process finished.');
 
@@ -142,7 +127,7 @@ class Create extends Controls
 	/**
 	 * Extends the time for a specified sandbox.
 	 *
-	 * @param integer $id
+	 * @param integer $id   Sitelog ID.
 	 * @param integer $days Days to extend by. Defaults to 30 day extensions.
 	 * @return void
 	 */
