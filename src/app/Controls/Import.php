@@ -58,7 +58,7 @@ class Import extends Controls
 	 * @param string      $file
 	 * @return string|null URL of the new site admin panel.
 	 */
-	public function import(string $email, array $file = null):?string
+	public function import(string $email, array $file, string $prefix):?string
 	{
 		$filename = $file["name"];
 		$cacheDir = $this->config->directories->cache . '/import';
@@ -102,7 +102,7 @@ class Import extends Controls
 		$rdir     = realpath($cacheDir . "/process-{$id}");
 		$dbfile   = realpath($database_import[0]);
 		$dbfinal  = "{$rdir}/database.sql";
-		$needle   = 'wp_t2_';
+		$needle   = $prefix;
 		$haystack = "wp_t{$id}_";
 		passthru("sed s/{$needle}/{$haystack}/ {$dbfile} > {$dbfinal}");
 
