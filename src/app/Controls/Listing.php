@@ -82,7 +82,6 @@ class Listing extends Controls
 			'listing',
 			[
 				'page_title'    => 'Home',
-				'ssl_available' => $this->config->general->sslAvailable,
 				'listings'      => $listCollection,
 				'banner'        => $this->showBannerMessage(),
 			]
