@@ -38,20 +38,16 @@ function wpgen_die(string $message):void {
 
 $di       = new DI\Container();
 $config   = new Configuration();
-$db       = $di->get(TWPG\Models\Models::class);
-$db_exist = $db->doIExist('wpmgr_sitelog');
+$di->get(TWPG\Models\Models::class)->doIExist('wpmgr_sitelog');
 
 if ($config->general->debug) {
 	error_reporting(E_ALL);
 	ini_set('display_errors', 1);
 }
 
-$control     = ( !empty($_REQUEST['control']) ) ? $_REQUEST['control'] : null;
-$id          = ( !empty($_GET['id']) ) ? $_GET['id'] : 0;
-$name        = ( !empty($_GET['name']) ) ? $_GET['name'] : null;
-$email       = ( !empty($_REQUEST['email']) ) ? $_REQUEST['email'] : null;
-$version     = ( !empty($_GET['v']) ) ? $_GET['v'] : null;
-$fulloutput  = ( isset($_GET['full']) ) ? true : false;
+$id      = ( !empty($_REQUEST['id']) ) ? $_REQUEST['id'] : 0;
+$control = ( !empty($_REQUEST['control']) ) ? $_REQUEST['control'] : null;
+$email   = ( !empty($_REQUEST['email']) ) ? $_REQUEST['email'] : null;
 
 if ($control === null) {
 	$di->get(TWPG\Controls\Listing::class)->showListing();
@@ -59,17 +55,19 @@ if ($control === null) {
 	switch ($control) {
 		case 'create':
 		case 'extend':
+			$version   = ( !empty($_GET['v']) ) ? $_GET['v'] : null;
 			$wpVersion = ( $version === 'other' ) ? $_GET['vnum'] : null;
 			$version   = ( $version === 'other' ) ? null : $version;
 			$create    = $di->get(TWPG\Controls\Create::class);
 			if ($control === 'extend') {
 				$create->extend($id);
 			} else {
+				$name   = ( !empty($_GET['name']) ) ? $_GET['name'] : null;
 				$result = $create->newSandbox($email, $name, (!empty($wpVersion)) ? $wpVersion : $version);
 				if (isset($result)) {
 					header('Location: ' . $result);
 				} else {
-					echo 'An error has occurred in your request. Please see the system log for more details.';
+					wpgen_die('An error has occurred in your request. Please see the system log for more details.');
 				}
 			}
 			break;
@@ -80,7 +78,7 @@ if ($control === null) {
 			if (isset($result)) {
 				header('Location: ' . $result);
 			} else {
-				echo 'An error has occurred in your request. Please see the system log for more details.';
+				wpgen_die('An error has occurred in your request. Please see the system log for more details.');
 			}
 			break;
 		case 'delete':
@@ -88,6 +86,7 @@ if ($control === null) {
 			header('Location: http://' . $config->general->domain);
 			break;
 		case 'log':
+			$fulloutput = ( isset($_GET['full']) ) ? true : false;
 			$di->get(TWPG\Controls\Log::class)->display($id, $fulloutput);
 			break;
 		case 'export':
@@ -103,7 +102,7 @@ if ($control === null) {
 			$di->get(TWPG\Controls\Cron::class)->shedule();
 			break;
 		default:
-			echo 'Invalid control received.';
+			wpgen_die('Invalid control received.');
 			break;
 	}
 }
