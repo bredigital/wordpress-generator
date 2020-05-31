@@ -7,6 +7,10 @@ no longer available.
 ## Unreleased
 ### Added
 - Ability to import a site in an archive.
+- Dark mode toggle.
+
+### Changed
+- npm is used for JavaScript dependencies.
 
 ## [1.2b] - 2020-05-22
 ### Added

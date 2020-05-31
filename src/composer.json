@@ -13,7 +13,6 @@
 		"twig/twig": "^3.0",
 		"phpmailer/phpmailer": "^6.1",
 		"php-di/php-di": "^6.0",
-		"twbs/bootstrap": "^4.4",
 		"wp-cli/wp-cli": "^2.1",
 		"wp-cli/core-command": "^2.0",
 		"wp-cli/config-command": "^2.0",

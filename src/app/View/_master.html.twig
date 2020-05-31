@@ -1,6 +1,7 @@
 <head>
 	<title>{{ page_title }} - WordPress Development Sites</title>
-	<link rel="stylesheet" href="vendor/twbs/bootstrap/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" href="assets/dark-mode.css">
 	<style>
 		.wrap {
 			margin: 20px!important;
@@ -24,8 +25,23 @@
 		{% block content %}{% endblock %}
 		<footer class="footer">
 			<div class="container">
-				<p class="text-muted">Generator {{ versions.app }}, using PHP {{ versions.php }} and {{ versions.wpcli }}</p>
+				<div class="container-fluid">
+					<div class="row">
+						<div class="footer-col-rt col-md-8">
+							<p class="text-muted">Generator {{ versions.app }}, using PHP {{ versions.php }} and {{ versions.wpcli }}</p>
+						</div>
+						<div class="footer-col-lf col-md-4">
+							<div class="custom-control custom-switch">
+								<input type="checkbox" class="custom-control-input" id="darkSwitch" />
+								<label class="custom-control-label" for="darkSwitch">Dark mode</label>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 		</footer>
+	<script src="node_modules/jquery/dist/jquery.min.js"></script>
+	<script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+	<script src="node_modules/dark-mode-switch/dark-mode-switch.min.js"></script>
 	{% block scripts %} {% endblock %}
 	</body>
