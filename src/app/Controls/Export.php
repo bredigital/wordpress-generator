@@ -42,10 +42,12 @@ class Export extends Controls
 		set_time_limit(0);
 
 		$this->cleanup($id);
+		$expo = $this->exportFilesystem($id);#
+		$this->fs->remove("{$this->config->directories->siteExports}/dbdump-{$id}.sql");
 
 		$this->log->info('Export finished.');
 
-		return $this->exportFilesystem($id);
+		return $expo;
 	}
 
 	/**

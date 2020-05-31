@@ -14,6 +14,7 @@ no longer available.
 - npm is used for JavaScript dependencies.
 - Sites now sit within a subfolder.
 - Missing filesystem files shown on listings.
+- SQL export cleared after export package is built.
 
 ### Removed
 - HTTPS toggle, it is now detected automatically.
