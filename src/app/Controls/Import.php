@@ -122,6 +122,8 @@ class Import extends Controls
 		$this->log->info("Database import complete. Reconfiguring import of site {$id} into generator mode.");
 		$this->com->setConfigs(
 			[
+				'WP_HOME'          => "'{$site_url}'",
+				'WP_SITEURL'       => "'{$site_url}'",
 				'WP_DEBUG'         => 'true',
 				'WP_DEBUG_LOG'     => 'true',
 				'WP_DEBUG_DISPLAY' => 'false',
@@ -136,7 +138,7 @@ class Import extends Controls
 		// Copy all the plugins and themes for a new site.
 		$this->log->info('Copying in generator plugin.');
 		$plugin = '/mu-plugins/generator.php';
-		//$this->fs->mirror("{$this->config->directories->wordpressInstall}{$plugin}", "{$id_dir}/wp-content{$plugin}");
+		$this->fs->copy("{$this->config->directories->wordpressInstall}{$plugin}", "{$id_dir}/wp-content{$plugin}");
 
 		$this->log->info('Process finished.');
 
