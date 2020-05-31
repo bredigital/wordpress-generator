@@ -6,7 +6,6 @@
     <exclude-pattern>*/src/cache/*</exclude-pattern>
 	<exclude-pattern>*/src/assets/exports/*</exclude-pattern>
     <exclude-pattern>*/src/assets/wordpress/*</exclude-pattern>
-    <exclude-pattern>*/src/assets/generator.php</exclude-pattern>
 
 	<rule ref="PSR2">
         <exclude name="Generic.WhiteSpace.DisallowTabIndent"/>
