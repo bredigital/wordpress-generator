@@ -20,7 +20,11 @@
 		<p><em>Login details will be emailed to you.</em></p>
 	</div> <!-- .modal-body -->
 	<div class="modal-footer">
-		<button type="submit" class="btn btn-primary" value="Create" id="btnImportNew">Submit</button>
+		<button type="submit" class="btn btn-primary" value="Create" id="btnImportNew">Import</button>
+		<button type="submit" class="btn btn-primary" id="btnImportNewDisabled" disabled style="display:none">
+			<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+			Importing, please wait...
+		</button>
 	</div>
 </form>
 {% endblock %}

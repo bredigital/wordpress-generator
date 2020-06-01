@@ -29,7 +29,11 @@
 		<p><em>Login details will be emailed to you.</em></p>	
 	</div> <!-- .modal-body -->
 	<div class="modal-footer">
-		<button type="submit" class="btn btn-primary" value="Create" id="btnCreateNew">Submit</button>	
+		<button type="submit" class="btn btn-primary" value="Create" id="btnCreateNew">Create</button>
+		<button type="submit" class="btn btn-primary" id="btnCreateNewDisabled" disabled style="display:none">
+			<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+			Creating, please wait...
+		</button>
 	</div>
 </form>
 {% endblock %}
