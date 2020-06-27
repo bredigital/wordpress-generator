@@ -34,6 +34,8 @@ class Import extends Controls
 	protected $com;
 	protected $view;
 
+	private $cacheDir;
+
 	public function __construct(
 		Configuration $config,
 		Filesystem $fs,
@@ -50,6 +52,8 @@ class Import extends Controls
 		$this->mail    = $mail;
 		$this->com     = $com;
 		$this->view    = $view;
+
+		$this->cacheDir = $this->config->directories->cache . '/import';
 	}
 
 	/**
@@ -62,7 +66,7 @@ class Import extends Controls
 	public function import(string $email, array $file):?string
 	{
 		$filename = $file["name"];
-		$cacheDir = $this->config->directories->cache . '/import';
+		$cacheDir = $this->cacheDir;
 		$id       = $this->sitelog->create('Importing...', $_SERVER['REMOTE_ADDR'], isset($_SERVER['HTTPS']));
 		
 		// Check if this site folder already exists.
@@ -83,24 +87,64 @@ class Import extends Controls
 
 		$this->unpackArchive($file, $id);
 
-		$config = null;
+		$setup = null;
 		// Check if the import is a Generator package.
 		$siteConfigLoc = "{$cacheDir}/process-{$id}/wpgen-config.json";
 		if ($this->fs->exists($siteConfigLoc)) {
-			$config = $this->loadGeneratorConfig($siteConfigLoc);
+			$setup = $this->processWordPressGeneratorArchive($id, $siteConfigLoc, $email, $site_url);
 		} else {
 			$this->fs->remove($cacheDir . "/process-{$id}");
 			wpgen_die('Valid archive uploaded, but was not in the supported format.');
 		}
 
+		// Copy all the plugins and themes for a new site.
+		$this->log->info('Copying in generator plugin.');
+		$this->fs->copy("{$this->config->directories->assets}/generator.php", "{$id_dir}/wp-content/mu-plugins/generator.php");
+
+		$this->log->info('Process finished.');
+
+		// Let the site owner know their details.
+		$this->mail->sendEmailToSiteOwner(
+			(int) $id,
+			"Site '{$setup['name']}' Has Been imported",
+			$this->view->render(
+				'Mail/create',
+				[
+					'url'      => $site_url,
+					'username' => $setup['username'],
+					'password' => $setup['password'],
+				],
+				true
+			)
+		);
+
+		// Cleanup.
+		$this->fs->remove($cacheDir . "/process-{$id}");
+
+		return "{$site_url}/wp-admin";
+	}
+
+	/**
+	 * Handles import functionality related to WordPress Generator archives.
+	 *
+	 * @param integer $id            The new site ID allocated.
+	 * @param string  $siteConfigLoc Path to the json config file.
+	 * @param string  $email         The importer's email address.
+	 * @param string  $siteUrl       The URL the new site will use.
+	 * @return array 'name' of the site, 'username' and 'password' of the controlling/admin user.
+	 */
+	private function processWordPressGeneratorArchive($id, $siteConfigLoc, $email, $siteUrl) {
+		$config = $this->loadGeneratorConfig($siteConfigLoc);
+		$idDir  = "{$this->config->directories->sites}/{$id}";
+
 		$this->sitelog->updateName((int)$id, $config['name']);
 
 		$database_import = [];
-		foreach (glob($cacheDir . "/process-{$id}/*.sql") as $file) {
+		foreach (glob($this->cacheDir . "/process-{$id}/*.sql") as $file) {
 			$database_import[] = $file;
 		}
 
-		$rdir     = realpath($cacheDir . "/process-{$id}");
+		$rdir     = realpath($this->cacheDir . "/process-{$id}");
 		$dbfile   = realpath($database_import[0]);
 		$dbfinal  = "{$rdir}/database.sql";
 		$input    = $config['prefix'];
@@ -113,19 +157,19 @@ class Import extends Controls
 			$this->fs->remove($db);
 		}
 
-		$this->fs->mirror($cacheDir . "/process-{$id}", $id_dir);
+		$this->fs->mirror($this->cacheDir . "/process-{$id}", $idDir);
 
 		// Install the database.
 		$this->log->info("Importing site {$id} database into the generator.");
 		try {
 			$this->com->createConfig($id, true);
-			$this->com->importDb($id_dir . '/database.sql');
+			$this->com->importDb($idDir . '/database.sql');
 
 			$this->log->info("Database import complete. Reconfiguring import of site {$id} into generator mode.");
 			$this->com->setConfigs(
 				[
-					'WP_HOME'          => "'{$site_url}'",
-					'WP_SITEURL'       => "'{$site_url}'",
+					'WP_HOME'          => "'{$siteUrl}'",
+					'WP_SITEURL'       => "'{$siteUrl}'",
 					'WP_DEBUG'         => 'true',
 					'WP_DEBUG_LOG'     => 'true',
 					'WP_DEBUG_DISPLAY' => 'false',
@@ -140,31 +184,11 @@ class Import extends Controls
 			wpgen_die($e->getMessage());
 		}
 
-		// Copy all the plugins and themes for a new site.
-		$this->log->info('Copying in generator plugin.');
-		$this->fs->copy("{$this->config->directories->assets}/generator.php", "{$id_dir}/wp-content/mu-plugins/generator.php");
-
-		$this->log->info('Process finished.');
-
-		// Let the site owner know their details.
-		$this->mail->sendEmailToSiteOwner(
-			(int) $id,
-			"Site '{$site_name}' Has Been imported",
-			$this->view->render(
-				'Mail/create',
-				[
-					'url'      => $site_url,
-					'username' => $account['username'],
-					'password' => $account['password'],
-				],
-				true
-			)
-		);
-
-		// Cleanup.
-		$this->fs->remove($cacheDir . "/process-{$id}");
-
-		return "{$site_url}/wp-admin";
+		return [
+			'name'     => $site_name,
+			'username' => $account['username'],
+			'password' => $account['password'],
+		];
 	}
 
 	/**
