@@ -7,6 +7,7 @@ no longer available.
 ## Unreleased
 ### Added
 - Ability to import a site in an archive.
+- Import format also accepts [Duplicator](https://wordpress.org/plugins/duplicator/) archives.
 - Dark mode toggle.
 - User can specify what version of WordPress they download.
 - Handled system errors now display visually, rather than a white screen.

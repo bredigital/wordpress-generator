@@ -20,6 +20,7 @@ use TWPG\Models\Sitelog;
 use Symfony\Component\Filesystem\Filesystem;
 use Comodojo\Zip\Zip;
 use Exception;
+use OutOfRangeException;
 
 /**
  * Import existing WordPress sites into the generator.
@@ -87,15 +88,26 @@ class Import extends Controls
 
 		$this->unpackArchive($file, $id);
 
-		$setup = null;
-		// Check if the import is a Generator package.
-		$siteConfigLoc = "{$cacheDir}/process-{$id}/wpgen-config.json";
-		if ($this->fs->exists($siteConfigLoc)) {
+		$setup        = null;
+		$genConfigLoc = "{$cacheDir}/process-{$id}/wpgen-config.json";
+		$dupConfigLoc = "{$cacheDir}/process-{$id}/dup-installer/dup-archive__*.txt";
+		if ($this->fs->exists($genConfigLoc)) {
+			// Check if the import is a Generator package.
 			$setup = $this->processArchive(
 				ImportEnum::WPGEN,
 				$id,
-				$siteConfigLoc,
+				$genConfigLoc,
 				"{$this->cacheDir}/process-{$id}/*.sql",
+				$email,
+				$site_url
+			);
+		} elseif (count(glob($dupConfigLoc)) === 1) {
+			// Check if the import is a Duplicator package.
+			$setup = $this->processArchive(
+				ImportEnum::DUP,
+				$id,
+				glob($dupConfigLoc)[0],
+				"{$this->cacheDir}/process-{$id}/dup-installer/dup-database__*.sql",
 				$email,
 				$site_url
 			);
@@ -230,6 +242,7 @@ class Import extends Controls
 	/**
 	 * Loads up the generator config for WordPress Generator archives.
 	 *
+	 * @throws OutOfRangeException if $type is outside of Enum.
 	 * @param integer $type          Type of archive import.
 	 * @param string  $siteConfigLoc Path to the config file.
 	 * @return array
@@ -245,6 +258,15 @@ class Import extends Controls
 					'prefix'   => $imp->prefix,
 					'prev_url' => $imp->url,
 				];
+			case ImportEnum::DUP:
+				$this->log->info("Duplicator archive (v{$imp->version_dup}) discovered.");
+				return [
+					'name'     => $imp->blogname,
+					'prefix'   => $imp->wp_tableprefix,
+					'prev_url' => $imp->url_old,
+				];
+			default:
+				throw new OutOfRangeException('Type index not supported');
 		}
 	}
 }
