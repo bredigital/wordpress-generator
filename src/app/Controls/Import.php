@@ -91,7 +91,14 @@ class Import extends Controls
 		// Check if the import is a Generator package.
 		$siteConfigLoc = "{$cacheDir}/process-{$id}/wpgen-config.json";
 		if ($this->fs->exists($siteConfigLoc)) {
-			$setup = $this->processWordPressGeneratorArchive($id, $siteConfigLoc, $email, $site_url);
+			$setup = $this->processArchive(
+				ImportEnum::WPGEN,
+				$id,
+				$siteConfigLoc,
+				"{$this->cacheDir}/process-{$id}/*.sql",
+				$email,
+				$site_url
+			);
 		} else {
 			$this->fs->remove($cacheDir . "/process-{$id}");
 			wpgen_die('Valid archive uploaded, but was not in the supported format.');
@@ -127,20 +134,22 @@ class Import extends Controls
 	/**
 	 * Handles import functionality related to WordPress Generator archives.
 	 *
+	 * @param integer $type          Type of archve.
 	 * @param integer $id            The new site ID allocated.
 	 * @param string  $siteConfigLoc Path to the json config file.
+	 * @param string  $siteDBLoc     Globbable path to SQL file (first is chosen).
 	 * @param string  $email         The importer's email address.
 	 * @param string  $siteUrl       The URL the new site will use.
 	 * @return array 'name' of the site, 'username' and 'password' of the controlling/admin user.
 	 */
-	private function processWordPressGeneratorArchive($id, $siteConfigLoc, $email, $siteUrl) {
-		$config = $this->loadGeneratorConfig($siteConfigLoc);
+	private function processArchive($type, $id, $siteConfigLoc, $siteDBLoc, $email, $siteUrl) {
+		$config = $this->loadArchiveConfig($type, $siteConfigLoc);
 		$idDir  = "{$this->config->directories->sites}/{$id}";
 
 		$this->sitelog->updateName((int)$id, $config['name']);
 
 		$database_import = [];
-		foreach (glob($this->cacheDir . "/process-{$id}/*.sql") as $file) {
+		foreach (glob($siteDBLoc) as $file) {
 			$database_import[] = $file;
 		}
 
@@ -162,7 +171,7 @@ class Import extends Controls
 		// Install the database.
 		$this->log->info("Importing site {$id} database into the generator.");
 		try {
-			$this->com->createConfig($id, true);
+			$this->com->createConfig((string)$id, true);
 			$this->com->importDb($idDir . '/database.sql');
 
 			$this->log->info("Database import complete. Reconfiguring import of site {$id} into generator mode.");
@@ -221,18 +230,27 @@ class Import extends Controls
 	/**
 	 * Loads up the generator config for WordPress Generator archives.
 	 *
-	 * @param string $siteConfigLoc Path to the config file.
+	 * @param integer $type          Type of archive import.
+	 * @param string  $siteConfigLoc Path to the config file.
 	 * @return array
 	 */
-	private function loadGeneratorConfig($siteConfigLoc)
+	private function loadArchiveConfig($type, $siteConfigLoc)
 	{
 		$imp = json_decode(file_get_contents($siteConfigLoc), false);
-		$this->log->info("Generator archive (v{$imp->genver}) discovered.");
-
-		return [
-			'name'     => $imp->name,
-			'prefix'   => $imp->prefix,
-			'prev_url' => $imp->url,
-		];
+		switch ($type) {
+			case ImportEnum::WPGEN:
+				$this->log->info("Generator archive (v{$imp->genver}) discovered.");
+				return [
+					'name'     => $imp->name,
+					'prefix'   => $imp->prefix,
+					'prev_url' => $imp->url,
+				];
+		}
 	}
+}
+
+class ImportEnum
+{
+	const WPGEN = 1;
+	const DUP   = 2;
 }
