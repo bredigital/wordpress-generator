@@ -71,6 +71,32 @@ class Com
 	}
 
 	/**
+	 * Sets the input user as admin.
+	 *
+	 * @param string $user User identifier.
+	 * @return void
+	 */
+	public function setAdmin(string $user):void
+	{
+		$user = escapeshellarg($user);
+		$this->wpcliCall("user set-role {$user} administrator");
+	}
+
+	/**
+	 * Find-replace mapper.
+	 *
+	 * @param string $find    The string to find in the DB...
+	 * @param string $replace ...and what to replace it with.
+	 * @return void
+	 */
+	public function replace(string $find, string $replace):void
+	{
+		$find    = escapeshellarg($find);
+		$replace = escapeshellarg($replace);
+		$this->wpcliCall("search-replace {$find} {$replace}");
+	}
+
+	/**
 	 * Creates the wp-config file with generator settings.
 	 *
 	 * @param string $id Used for the prefix, generally matches the site URL.

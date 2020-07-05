@@ -170,7 +170,7 @@ class Import extends Controls
 		$dbfinal  = "{$rdir}/database.sql";
 		$input    = $config['prefix'];
 		$output   = "wp_t{$id}_";
-		passthru("sed s/{$input}/{$output}/ {$dbfile} > {$dbfinal}");
+		$this->updateDbPrefixes($dbfile, $dbfinal, $input, $output);
 
 		$this->log->info("Preparing database {$database_import[0]} of site {$id} for importing.");
 
@@ -185,6 +185,7 @@ class Import extends Controls
 		try {
 			$this->com->createConfig((string)$id, true);
 			$this->com->importDb($idDir . '/database.sql');
+			$this->com->replace($input, $output);
 
 			$this->log->info("Database import complete. Reconfiguring import of site {$id} into generator mode.");
 			$this->com->setConfigs(
@@ -268,6 +269,30 @@ class Import extends Controls
 			default:
 				throw new OutOfRangeException('Type index not supported');
 		}
+	}
+
+	/**
+	 * Rewrites the database file to match new prefixes.
+	 *
+	 * @param string $fileLoc Database file location.
+	 * @param string $newLoc  Where to drop the new file.
+	 * @param string $find    What word to find.
+	 * @param string $replace What to replace it with.
+	 * @return void
+	 */
+	private function updateDbPrefixes(string $fileLoc, string $newLoc, string $find, string $replace)
+	{
+		$commands = [
+			'TABLE',
+			'INSERT INTO'
+		];
+		$this->log->info("Modifying database import file ('{$find}' to '{$replace}').");
+		$file = file_get_contents($fileLoc);
+		foreach ($commands as $command) {
+			$file = str_replace("{$command} `{$find}", "{$command} `{$replace}", $file);
+		}
+		file_put_contents($newLoc, $file);
+		$this->log->info('Import file mod completed.');
 	}
 }
 
