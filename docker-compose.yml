@@ -31,7 +31,7 @@ services:
     - "./docker/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini"
     environment:
       GN_DOMAIN: localhost:8080
-      GN_DEBUG: 1
+      GN_DEBUG: 0
       DB_HOST: db
       DB_DATABASE: wp_generator
       DB_USER: root
