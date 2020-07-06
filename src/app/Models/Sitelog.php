@@ -108,6 +108,13 @@ class Sitelog extends Models
 		)->execute([ (int)$blResp, $id ]);
 	}
 
+	public function updateName(int $id, string $name):void
+	{
+		$this->PDO_ALL->prepare(
+			"UPDATE {$this->config->database->maintable} SET name =  ? WHERE id = ?"
+		)->execute([ $name, $id ]);
+	}
+
 	public function setProtectedStatus(int $id, bool $isProtected):void
 	{
 		if ($isProtected) {

@@ -15,29 +15,40 @@ if (file_exists(__DIR__ . '/vendor/autoload.php')) {
 	die();
 }
 
+use TWPG\Services\ViewRender;
 use TWPG\Services\Configuration;
+
+/**
+ * Handles system stops with a visual-friendly page.
+ *
+ * @param string $message The message to display to the user.
+ */
+function wpgen_die(string $message):void
+{
+	(new DI\Container())->get(ViewRender::class)->render(
+		'error',
+		[
+			'page_title' => 'System error',
+			'message'    => $message,
+			'return_url' => (new Configuration())->general->domain,
+			'log_url'    => (new Configuration())->general->domain . '/index.php?control=log',
+		]
+	);
+	die();
+}
 
 $di       = new DI\Container();
 $config   = new Configuration();
-$db       = $di->get(TWPG\Models\Models::class);
-$db_exist = $db->doIExist('wpmgr_sitelog');
-if (! $db_exist) {
-	echo 'wpmgr_sitelog missing. Creating...';
-	$db->createSitelog();
-}
+$di->get(TWPG\Models\Models::class)->doIExist('wpmgr_sitelog');
 
 if ($config->general->debug) {
 	error_reporting(E_ALL);
 	ini_set('display_errors', 1);
 }
 
-$control     = ( !empty($_GET['control']) ) ? $_GET['control'] : null;
-$id          = ( !empty($_GET['id']) ) ? $_GET['id'] : 0;
-$name        = ( !empty($_GET['name']) ) ? $_GET['name'] : null;
-$email       = ( !empty($_GET['email']) ) ? $_GET['email'] : null;
-$useSSL      = ( $config->general->sslAvailable ) ? ( !empty($_GET['secure']) ) ? (bool)$_GET['secure'] : false : false;
-$version     = ( !empty($_GET['v']) ) ? $_GET['v'] : null;
-$fulloutput  = ( isset($_GET['full']) ) ? true : false;
+$id      = ( !empty($_REQUEST['id']) ) ? $_REQUEST['id'] : 0;
+$control = ( !empty($_REQUEST['control']) ) ? $_REQUEST['control'] : null;
+$email   = ( !empty($_REQUEST['email']) ) ? $_REQUEST['email'] : null;
 
 if ($control === null) {
 	$di->get(TWPG\Controls\Listing::class)->showListing();
@@ -45,16 +56,29 @@ if ($control === null) {
 	switch ($control) {
 		case 'create':
 		case 'extend':
-			$create = $di->get(TWPG\Controls\Create::class);
-			if ($control == 'extend') {
-				$create->extend($_GET["id"]);
+			$version   = ( !empty($_GET['v']) ) ? $_GET['v'] : null;
+			$wpVersion = ( $version === 'other' ) ? $_GET['vnum'] : null;
+			$version   = ( $version === 'other' ) ? null : $version;
+			$create    = $di->get(TWPG\Controls\Create::class);
+			if ($control === 'extend') {
+				$create->extend($id);
 			} else {
-				$result = $create->newSandbox($email, $name, $useSSL, $version);
+				$name   = ( !empty($_GET['name']) ) ? $_GET['name'] : null;
+				$result = $create->newSandbox($email, $name, (!empty($wpVersion)) ? $wpVersion : $version);
 				if (isset($result)) {
 					header('Location: ' . $result);
 				} else {
-					echo 'An error has occurred in your request. Please see the system log for more details.';
+					wpgen_die('An error has occurred in your request. Please see the system log for more details.');
 				}
+			}
+			break;
+		case 'create_import':
+			$import = $di->get(TWPG\Controls\Import::class);
+			$result = $import->import($email, $_FILES['archive']);
+			if (isset($result)) {
+				header('Location: ' . $result);
+			} else {
+				wpgen_die('An error has occurred in your request. Please see the system log for more details.');
 			}
 			break;
 		case 'delete':
@@ -62,6 +86,7 @@ if ($control === null) {
 			header('Location: http://' . $config->general->domain);
 			break;
 		case 'log':
+			$fulloutput = ( isset($_GET['full']) ) ? true : false;
 			$di->get(TWPG\Controls\Log::class)->display($id, $fulloutput);
 			break;
 		case 'export':
@@ -77,7 +102,7 @@ if ($control === null) {
 			$di->get(TWPG\Controls\Cron::class)->shedule();
 			break;
 		default:
-			echo 'Invalid control received.';
+			wpgen_die('Invalid control received.');
 			break;
 	}
 }

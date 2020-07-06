@@ -13,16 +13,14 @@
 		</div>
 	</div>
 
-	<div class="row">
-		<div class="col-md-12">
-			<h2>Current Sites</h2>
-			{% include 'Segments/form.html.twig' %}
-		</div>
-	</div>
+	{% include 'Segments/form_create.html.twig' with {'modalId': 'modCreate', 'modalTitle': 'Create sandbox'} %}
+	{% include 'Segments/form_import.html.twig' with {'modalId': 'modImport', 'modalTitle': 'Import sandbox'} %}
 
 	<div class="row">
 		<div class="col-md-12">
 			<p>
+				<button type="button" class="btn btn-info" data-toggle="modal" data-target="#modCreate">Create</button>
+				<button type="button" class="btn btn-info" data-toggle="modal" data-target="#modImport">Import</button>
 				<a class="btn btn-info" href="index.php?control=log">System log</a>
 			</p>
 		</div>
@@ -46,7 +44,13 @@
 							<tr>
 								<td class='sitetable name'>
 									{{ listing.name|raw }}
-									{% if listing.dbExists == false %} - <span style="color:#ff6e6e;font-style:italic" title="The MySQL database referenced to does not exist.">Missing Database</span>{% endif %}
+									{% if listing.dbExists == false and listing.fsExists == false %}
+									<span class="badge badge-warning">Missing system</span>
+									{% elseif listing.dbExists == false %}
+									<span class="badge badge-warning">Missing database</span>
+									{% elseif listing.fsExists == false %}
+									<span class="badge badge-warning">Missing filesystem</span>
+									{% endif %}
 								</td>
 								<td class='sitetable url'><a href='{{ listing.urls.site }}'>{{ listing.urls.site }}</a></td>
 								<td class='sitetable version'>{{ listing.version|default('Unknown') }}</td>
@@ -88,4 +92,8 @@
 		</div>
 	</div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" src="assets/home.js"></script>
 {% endblock %}

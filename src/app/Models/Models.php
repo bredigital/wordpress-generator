@@ -43,7 +43,7 @@ class Models
 				);
 		} catch (Exception $e) {
 			$this->log->error("A database error occurred: ({$e->getCode()}) {$e->getMessage()}");
-			die('A system error has occurred. Please check the logs to discover why.');
+			wpgen_die("A database communication error has occurred. {$e->getMessage()}.");
 		}
 	}
 
@@ -86,12 +86,18 @@ class Models
 	 * @param string $tableName
 	 * @return void
 	 */
-	public function doIExist(string $tableName):bool
+	public function doIExist(string $tableName, bool $create = true):bool
 	{
 		try {
 			$this->PDO_ALL->query("SELECT 1 FROM {$tableName} LIMIT 1");
 		} catch (\Exception $e) {
-			return false;
+			if ($create) {
+				$this->createSitelog();
+				$response = $this->doIExist($tableName, false);
+				return $response;
+			} else {
+				return false;
+			}
 		}
 
 		return true;
@@ -104,6 +110,7 @@ class Models
 	 */
 	public function createSitelog():void
 	{
+		$this->log->info('wpmgr_sitelog missing. Creating...');
 		$sql = "CREATE TABLE IF NOT EXISTS `wpmgr_sitelog` (
 			`id` int(11) NOT NULL AUTO_INCREMENT,
 			`name` varchar(255) DEFAULT NULL,

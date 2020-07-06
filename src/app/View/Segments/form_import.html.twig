@@ -1,0 +1,30 @@
+{% extends "Segments/modal.html.twig" %}
+
+{% block content %}
+<form role="form" action="index.php" method="POST" enctype="multipart/form-data">
+	<div class="modal-body">
+		<input name="control" type="hidden" value="create_import">
+		<div class="form-group">
+			<label for="email">Your email</label>
+			<input name="email" type="email" placeholder="joe.bloggs@example.com" class="form-control" required />
+		</div>
+		<div class="form-group">
+			<label for="uplBackup">Your backup file</label>
+			<div class="custom-file">
+				<input type="file" class="custom-file-input" id="uplBackup" name="archive" accept=".zip" required />
+				<label class="custom-file-label" for="uplBackup">Upload an archive</label>
+				<p>Accepted imports are: WordPress Generator, <a href="https://wordpress.org/plugins/duplicator">Duplicator</a> (zip).</p>
+			</div>
+		</div>
+		<br>
+		<p><em>Login details will be emailed to you.</em></p>
+	</div> <!-- .modal-body -->
+	<div class="modal-footer">
+		<button type="submit" class="btn btn-primary" value="Create" id="btnImportNew">Import</button>
+		<button type="submit" class="btn btn-primary" id="btnImportNewDisabled" disabled style="display:none">
+			<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+			Importing, please wait...
+		</button>
+	</div>
+</form>
+{% endblock %}

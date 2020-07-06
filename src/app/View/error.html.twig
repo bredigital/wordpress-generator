@@ -1,0 +1,16 @@
+{% extends "_master.html.twig" %}
+
+{% block content %}
+<div class="container">
+	<div class="row">
+		<div class="col-md-12">
+			<h1>Sorry, a system error has occurred</h1>
+			<div class="alert alert-danger" role="alert">{{ message }}</div>
+			<p>
+				<a class="btn btn-info" href="//{{ return_url }}">Return</a>
+				<a class="btn btn-info" href="//{{ log_url }}">Logs</a>
+			</p>
+		</div>
+	</div>
+</div>
+{% endblock %}

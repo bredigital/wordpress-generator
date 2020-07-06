@@ -54,7 +54,7 @@ class Listing extends Controls
 		$listCollection = [];
 		if (count($listings) > 0) {
 			foreach ($listings as $listing) {
-				@include __DIR__ .  "/../../{$listing["id"]}/wp-includes/version.php";
+				@include "{$this->config->directories->sites}/{$listing["id"]}/wp-includes/version.php";
 
 				$useSSL = ( $listing["secure"] === 1 ) ? 'https://' : 'http://';
 
@@ -64,13 +64,14 @@ class Listing extends Controls
 					'daysRemain'  => $this->daysRemaining(Carbon::parse($listing['created_date']), Carbon::parse($listing['expiry_date'])),
 					'isProtected' => ( ! empty($listing['expiry_date']) ) ? false : true,
 					'urls'        => [
-						'site'   => $useSSL . $_ENV['GN_DOMAIN'] . '/' . $listing['id'],
+						'site'   => $useSSL . $_ENV['GN_DOMAIN'] . '/sites/' . $listing['id'],
 						'delete' => "index.php?control=delete&id=" . $listing['id'],
 						'export' => "index.php?control=export&id=" . $listing['id'],
 						'extend' => "index.php?control=extend&id=" . $listing['id'],
 						'log'    => "index.php?control=log&id="    . $listing['id']
 					],
-					'dbExists'    => ( count($this->sitelog->tables($listing['id'])) > 0 ) ? true : false
+					'dbExists'    => ( count($this->sitelog->tables($listing['id'])) > 0 ) ? true : false,
+					'fsExists'    => ($this->fs->exists("{$this->config->directories->sites}/{$listing["id"]}/index.php")) ? true : false
 				];
 			}
 		} else {
@@ -81,7 +82,6 @@ class Listing extends Controls
 			'listing',
 			[
 				'page_title'    => 'Home',
-				'ssl_available' => $this->config->general->sslAvailable,
 				'listings'      => $listCollection,
 				'banner'        => $this->showBannerMessage(),
 			]

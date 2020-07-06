@@ -42,10 +42,12 @@ class Export extends Controls
 		set_time_limit(0);
 
 		$this->cleanup($id);
+		$expo = $this->exportFilesystem($id);#
+		$this->fs->remove("{$this->config->directories->siteExports}/dbdump-{$id}.sql");
 
 		$this->log->info('Export finished.');
 
-		return $this->exportFilesystem($id);
+		return $expo;
 	}
 
 	/**
@@ -73,12 +75,12 @@ class Export extends Controls
 	{
 		$this->log->info("Exporting {$id} filesystem.");
 
-		$rootPath = "{$this->config->directories->rootpath}/{$id}";
+		$rootPath = "{$this->config->directories->sites}/{$id}";
 		$zipName  = "export-site-{$id}.zip";
 		$zipPath  = "{$this->config->directories->siteExports}/{$zipName}";
 
 		$zip = Zip::create($zipPath);
-		$zip->add($rootPath);
+		$zip->add($rootPath, true);
 		$zip->add("{$this->config->directories->assets}/export-readme.txt");
 
 		if ($includeDatabase) {
@@ -99,7 +101,7 @@ class Export extends Controls
 	{
 		$this->log->info("Exporting {$id} database.");
 
-		$path  = realpath("{$this->config->directories->rootpath}/{$id}");
+		$path  = realpath("{$this->config->directories->sites}/{$id}");
 		$dname = "dbdump-{$id}.sql";
 		$dloc  = realpath($this->config->directories->siteExports) . "/{$dname}";
 		$this->com->setPath($path);

@@ -4,6 +4,24 @@ Adheres to [Keep a Changelog][KC], and [Semantic Versioning][SV].
 This has been migrated from Subversion to Git(Hub). Versions prior to 1.0b are
 no longer available.
 
+## Unreleased
+### Added
+- Ability to import a site in an archive.
+- Import format also accepts [Duplicator](https://wordpress.org/plugins/duplicator/) archives.
+- Dark mode toggle.
+- User can specify what version of WordPress they download.
+- Handled system errors now display visually, rather than a white screen.
+
+### Changed
+- npm is used for JavaScript dependencies.
+- Sites now sit within a subfolder.
+- Missing filesystem files shown on listings.
+- SQL export cleared after export package is built.
+- Form on homepage now moved into modal windows.
+
+### Removed
+- HTTPS toggle, it is now detected automatically.
+
 ## [1.2b] - 2020-05-22
 ### Added
 - Sitelog table created by system when empty schema detected.

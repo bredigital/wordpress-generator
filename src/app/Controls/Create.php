@@ -9,6 +9,7 @@
 
 namespace TWPG\Controls;
 
+use Exception;
 use TWPG\Controls\Controls;
 use TWPG\Services\Configuration;
 use TWPG\Services\SystemLog;
@@ -53,54 +54,55 @@ class Create extends Controls
 	/**
 	 * Creates a new sandbox site.
 	 *
-	 * @param string      $email
-	 * @param string      $name
-	 * @param boolean     $useSSL
-	 * @param string|null $version
+	 * @param string      $email   Admin email and contact by the system.
+	 * @param string      $name    Site alias.
+	 * @param string|null $version Specific version of WordPress, if desired.
 	 * @return string|null URL of the new site admin panel.
 	 */
-	public function newSandbox(string $email, ?string $name = null, bool $useSSL = false, ?string $version = null):?string
+	public function newSandbox(string $email, ?string $name = null, ?string $version = null):?string
 	{
-		$id      = $this->sitelog->create($name, $_SERVER['REMOTE_ADDR'], $useSSL);
+		$id      = $this->sitelog->create($name, $_SERVER['REMOTE_ADDR'], isset($_SERVER['HTTPS']));
 		$version = ( isset($version) ) ? $version : 'latest';
 
 		// Check if this site folder already exists.
 		$this->log->info("Creation started for site {$id}.");
-		if ($this->fs->exists($id)) {
+		if ($this->fs->exists("{$this->config->directories->sites}/{$id}")) {
 			$this->log->warning("Site {$id} already exists. Exiting.");
 
 			return null;
 		}
 
-		$id_dir   = "{$this->config->directories->rootpath}/{$id}";
-		$ssl      = ( $useSSL ) ? 'https://' : 'http://';
-		$site_url = "{$ssl}{$this->config->general->domain}/{$id}";
+		$id_dir   = "{$this->config->directories->sites}/{$id}";
+		$ssl      = ( isset($_SERVER['HTTPS']) ) ? 'https://' : 'http://';
+		$site_url = "{$ssl}{$this->config->general->domainSites}/{$id}";
 
-		$this->fs->mkdir("{$id_dir}/");
-		$this->com->setPath(realpath($id_dir));
-		$this->com->setURL($site_url);
+		try {
+			$this->fs->mkdir("{$id_dir}/");
+			$this->com->setPath(realpath($id_dir));
+			$this->com->setURL($site_url);
 
-		// Download and setup the requested copy of WordPress.
-		$this->com->download($version);
-		$this->com->createConfig($id);
-		$this->com->setConfigs(
-			[
-				'WP_DEBUG'         => 'true',
-				'WP_DEBUG_LOG'     => 'true',
-				'WP_DEBUG_DISPLAY' => 'false',
-			]
-		);
+			// Download and setup the requested copy of WordPress.
+			$this->com->download($version);
+			$this->com->createConfig($id);
+			$this->com->setConfigs(
+				[
+					'WP_DEBUG'         => 'true',
+					'WP_DEBUG_LOG'     => 'true',
+					'WP_DEBUG_DISPLAY' => 'false',
+				]
+			);
 
-		// Setup WordPress with their details, and indentify with the mu-plugin.
-		$site_name = ( empty($name) ) ? "Spinup {$id}" : $name;
-		$account   = $this->com->install($site_name, $email);
-		$this->com->setOptions([ '_wp_generator_id' => $id ]);
+			// Setup WordPress with their details, and indentify with the mu-plugin.
+			$site_name = ( empty($name) ) ? "Spinup {$id}" : $name;
+			$account   = $this->com->install($site_name, $email);
+			$this->com->setOptions([ '_wp_generator_id' => $id ]);
+		} catch (Exception $e) {
+			wpgen_die($e->getMessage());
+		}
 
-		// Copy all the plugins and themes for a new site.
-		$this->log->info('Copying in plugins & themes.');
-		$this->fs->mirror("{$this->config->directories->wordpressInstall}/mu-plugins", "{$id_dir}/wp-content/mu-plugins");
-		$this->fs->mirror("{$this->config->directories->wordpressInstall}/plugins", "{$id_dir}/wp-content/plugins");
-		$this->fs->mirror("{$this->config->directories->wordpressInstall}/themes", "{$id_dir}/wp-content/themes");
+		// Copy all the plugins and themes for a new site, and drop a generator config file.
+		$this->copySetupFiles($id);
+		$this->setSiteGenConfig($id, $site_name, $site_url);
 
 		$this->log->info('Process finished.');
 
@@ -125,7 +127,7 @@ class Create extends Controls
 	/**
 	 * Extends the time for a specified sandbox.
 	 *
-	 * @param integer $id
+	 * @param integer $id   Sitelog ID.
 	 * @param integer $days Days to extend by. Defaults to 30 day extensions.
 	 * @return void
 	 */

@@ -76,7 +76,7 @@ class Delete extends Controls
 			$this->view->render(
 				'Mail/delete',
 				[
-					'url'         => "http://{$this->config->general->domain}/{$id}",
+					'url'         => "http://{$this->config->general->domainSites}/{$id}",
 					'downloadZip' => ( ! empty($downloadable) ) ? $downloadable : null,
 				],
 				true
@@ -84,36 +84,10 @@ class Delete extends Controls
 		);
 
 		$this->sitelog->purge($id, ( $cron ) ? 'CRON' : $_SERVER['REMOTE_ADDR']);
-		$this->fs->remove([ $id ]);
+		$this->fs->remove("{$this->config->directories->sites}/{$id}");
 
 		$this->log->info("Site {$id} deletion successful.");
 
 		return true;
-	}
-
-	/**
-	 * Removes the WordPress staging folder. Boolean response depending on if action was taken.
-	 *
-	 * @return boolean
-	 */
-	public function forceDelete():bool
-	{
-		$this->log->info('Fix called. Force-deleting \'wordpress\' folder.');
-
-		if (file_exists("{$this->config->directories->rootpath}/wordpress/")) {
-			try {
-				$this->fs->remove([ "{$this->config->directories->rootpath}/wordpress/" ]);
-			} catch (\Exception $e) {
-				$this->log->error('An error occured during the delete: ' . $e->getMessage());
-				return false;
-			}
-
-			$this->log->info('\'wordpress\' folder deleted.');
-			return true;
-		} else {
-			$this->log->info('No \'wordpress\' folder found.');
-
-			return false;
-		}
 	}
 }

@@ -9,6 +9,7 @@
 
 namespace TWPG\Services;
 
+use Exception;
 use TWPG\Services\Configuration;
 use TWPG\Services\SystemLog;
 
@@ -70,12 +71,38 @@ class Com
 	}
 
 	/**
+	 * Sets the input user as admin.
+	 *
+	 * @param string $user User identifier.
+	 * @return void
+	 */
+	public function setAdmin(string $user):void
+	{
+		$user = escapeshellarg($user);
+		$this->wpcliCall("user set-role {$user} administrator");
+	}
+
+	/**
+	 * Find-replace mapper.
+	 *
+	 * @param string $find    The string to find in the DB...
+	 * @param string $replace ...and what to replace it with.
+	 * @return void
+	 */
+	public function replace(string $find, string $replace):void
+	{
+		$find    = escapeshellarg($find);
+		$replace = escapeshellarg($replace);
+		$this->wpcliCall("search-replace {$find} {$replace}");
+	}
+
+	/**
 	 * Creates the wp-config file with generator settings.
 	 *
 	 * @param string $id Used for the prefix, generally matches the site URL.
 	 * @return void
 	 */
-	public function createConfig(string $id):void
+	public function createConfig(string $id, bool $force = false):void
 	{
 		$db_host = escapeshellarg($this->config->database->host . ':' . $this->config->database->port);
 		$db_name = escapeshellarg($this->config->database->database);
@@ -94,6 +121,7 @@ class Com
 					"--dbpass={$db_pass}",
 					"--dbprefix={$site_id}",
 					"--skip-check",
+					($force) ? "--force" : ""
 				]
 			)
 		);
@@ -127,7 +155,7 @@ class Com
 			$key   = escapeshellarg($key);
 			$value = escapeshellarg($value);
 
-			$this->wpcliCall("option add {$key} {$value}");
+			$this->wpcliCall("option update {$key} {$value}");
 		}
 	}
 
@@ -182,6 +210,17 @@ class Com
 	}
 
 	/**
+	 * Imports a database file into the Generator.
+	 *
+	 * @param string $sqlFile A filesystem location to import.
+	 * @return void
+	 */
+	public function importDb(string $sqlFile):void
+	{
+		$this->wpcliCall("db import {$sqlFile}");
+	}
+
+	/**
 	 * Gets the WP-CLI version. Does not require path or url.
 	 *
 	 * @return string
@@ -220,6 +259,7 @@ class Com
 	 * The big cheese of Com. Formulate a WP-CLI shell command, executes it under the permissions of the
 	 * running user, and logs whatever is outputted from the command.
 	 *
+	 * @throws Exception if the reply from the shell command contains an error.
 	 * @param string  $command        The command issued to WP-CLI.
 	 * @param boolean $log            Should Com write output to log? Default is true.
 	 * @param boolean $return_command Instead of running, return the command. Designed for nested statements.
@@ -238,10 +278,15 @@ class Com
 
 		$response = shell_exec($com);
 
-		if ($log) {
-			$this->log->info('WP-CLI responded with: ' . $response);
-		}
+		if (strpos($response, 'Error:') === false) {
+			if ($log) {
+				$this->log->info('WP-CLI responded with: ' . $response);
+			}
 
-		return $response;
+			return $response;
+		} else {
+			$this->log->error('WP-CLI responded with: ' . $response);
+			throw new Exception('WP-CLI responded with an error. Check the logs for the output.');
+		}
 	}
 }

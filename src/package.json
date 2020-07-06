@@ -1,0 +1,19 @@
+{
+  "name": "wordpress-generator",
+  "description": "",
+  "dependencies": {
+    "bootstrap": "^4.5.0",
+    "dark-mode-switch": "^1.0.0",
+    "jquery": "^3.5.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/soup-bowl/wordpress-generator.git"
+  },
+  "author": "soup-bowl",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/soup-bowl/wordpress-generator/issues"
+  },
+  "homepage": "https://github.com/soup-bowl/wordpress-generator#readme"
+}
