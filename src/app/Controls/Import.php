@@ -69,7 +69,7 @@ class Import extends Controls
 		$filename = $file["name"];
 		$cacheDir = $this->cacheDir;
 		$id       = $this->sitelog->create('Importing...', $_SERVER['REMOTE_ADDR'], isset($_SERVER['HTTPS']));
-		
+
 		// Check if this site folder already exists.
 		$this->log->info("Creation started for site {$id}.");
 		if ($this->fs->exists($id)) {
@@ -224,12 +224,12 @@ class Import extends Controls
 		$cacheDir = $this->config->directories->cache . '/import';
 		$zipFile  = $cacheDir . '/' . $file["name"];
 		$pDir     = $cacheDir . "/process-{$id}";
- 
+
 		if (! $this->fs->exists($cacheDir)) {
 			$this->fs->mkdir($cacheDir);
 		}
 		move_uploaded_file($file["tmp_name"], $zipFile);
-		
+
 		// Create a staging folder, extract ZIP and delete archive.
 		$this->log->info("Extracting archive '{$file['name']}' for site {$id}.");
 		$this->fs->mkdir($pDir);
@@ -284,6 +284,7 @@ class Import extends Controls
 	{
 		$commands = [
 			'TABLE',
+			'TABLES',
 			'INSERT INTO'
 		];
 		$this->log->info("Modifying database import file ('{$find}' to '{$replace}').");
