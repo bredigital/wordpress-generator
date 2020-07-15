@@ -95,7 +95,13 @@ class Create extends Controls
 			// Setup WordPress with their details, and indentify with the mu-plugin.
 			$site_name = ( empty($name) ) ? "Spinup {$id}" : $name;
 			$account   = $this->com->install($site_name, $email);
-			$this->com->setOptions([ '_wp_generator_id' => $id ]);
+			$this->com->setOptions(
+				[
+					'siteurl'          => $site_url,
+					'home'             => $site_url,
+					'_wp_generator_id' => $id,
+				]
+			);
 		} catch (Exception $e) {
 			wpgen_die($e->getMessage());
 		}
