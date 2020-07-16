@@ -4,7 +4,7 @@ Adheres to [Keep a Changelog][KC], and [Semantic Versioning][SV].
 This has been migrated from Subversion to Git(Hub). Versions prior to 1.0b are
 no longer available.
 
-## Unreleased
+## [1.3b] - 2020-07-16
 ### Added
 - Ability to import a site in an archive (#22).
 - Import format also accepts [Duplicator](https://wordpress.org/plugins/duplicator/) archives.
@@ -78,3 +78,4 @@ no longer available.
 [1.0b]: https://github.com/bredigital/wordpress-generator/releases/tag/1.0b
 [1.1b]: https://github.com/bredigital/wordpress-generator/releases/tag/1.1b
 [1.2b]: https://github.com/bredigital/wordpress-generator/releases/tag/1.2b
+[1.3b]: https://github.com/bredigital/wordpress-generator/releases/tag/1.3b
