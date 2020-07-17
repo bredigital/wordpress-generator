@@ -1,4 +1,4 @@
-# Sandbox WordPress Generator
+# 🚀 WordPress Generator
 One-click generation of WordPress sites, for quick spin-up development and
 testing without configuration. All through the power of [WP-CLI][wp]!
 
@@ -6,7 +6,7 @@ testing without configuration. All through the power of [WP-CLI][wp]!
 
 **This is not intended to be used in a production environment.**
 
-## Download
+## 💾 Download
 Pre-made setups can be found on the [releases page][r], as
 `wordpress-generator-x.x.zip`. Simply extract into the root of your desired web
 directory, rename `.env.example` to `.env` and configure as desired.
@@ -23,7 +23,15 @@ automatic features to run.
 
 `<root web address>/controls.php?control=cron`
 
-## Sites
+## 🚧 Sites
+Each site created is given a **60-day timer**, which can be extended. Once you're
+happy with your changes, the site can be **exported**. Alternatively, if all goes
+wrong and you've invented an absolute horror, simply **click delete and 💨**!
+
+You can also *import* certain sites into the Generator. The generator supports
+**non-multisite imports from 1.3b and beyond exports, and Duplicator packages**.
+It's a new beta function, so your mileage may vary with this feature.
+
 Each site will be given a small must-use plugin that maintains a link back to
 the generator. This brings the generator email settings into the site, and adds
 a small admin bar option to head back. This automatically detects if it is
