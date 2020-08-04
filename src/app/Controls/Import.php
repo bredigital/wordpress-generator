@@ -276,6 +276,7 @@ class Import extends Controls
 	/**
 	 * Rewrites the database file to match new prefixes.
 	 *
+	 * @todo Refactor the process to not rely on a list of commands to know what to replace.
 	 * @param string $fileLoc Database file location.
 	 * @param string $newLoc  Where to drop the new file.
 	 * @param string $find    What word to find.
@@ -286,8 +287,11 @@ class Import extends Controls
 	{
 		$commands = [
 			'TABLE',
+			'TABLE IF NOT EXISTS',
 			'TABLES',
-			'INSERT INTO'
+			'INSERT INTO',
+			'INSERT IGNORE INTO',
+			'REPLACE INTO',
 		];
 		$this->log->info("Modifying database import file ('{$find}' to '{$replace}').");
 		$file = file_get_contents($fileLoc);
