@@ -61,7 +61,7 @@ class Listing extends Controls
 				$listCollection[] = [
 					'name'        => ( empty($listing['name']) ) ? '<i>Purpose not set</i>' : $listing['name'],
 					'version'     => ( empty($wp_version) ) ? null : $wp_version,
-					'daysRemain'  => $this->daysRemaining(Carbon::parse($listing['created_date']), Carbon::parse($listing['expiry_date'])),
+					'daysRemain'  => $this->daysRemaining(Carbon::parse($listing['expiry_date'])),
 					'isProtected' => ( ! empty($listing['expiry_date']) ) ? false : true,
 					'urls'        => [
 						'site'   => $useSSL . $_ENV['GN_DOMAIN'] . '/sites/' . $listing['id'],

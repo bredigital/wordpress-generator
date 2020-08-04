@@ -48,7 +48,7 @@ if (file_exists($comp_path) && ! empty($table)) {
 
 		$site_id   = get_option('_wp_generator_id', -1);
 		$site_conf = $wpdb->get_results("SELECT * FROM wpmgr_sitelog WHERE id = {$site_id}");
-		$remaining = Carbon::parse($site_conf[0]->created_date)->diffInDays(
+		$remaining = Carbon::now()->diffInDays(
 			Carbon::parse($site_conf[0]->expiry_date),
 			false
 		);

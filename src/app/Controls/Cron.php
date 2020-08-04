@@ -68,7 +68,7 @@ class Cron extends Controls
 
 		foreach ($listings as $listing) {
 			if (! empty($listing['expiry_date'])) {
-				$daysRemaining = $this->daysRemaining(Carbon::parse($listing['created_date']), Carbon::parse($listing['expiry_date']));
+				$daysRemaining = $this->daysRemaining(Carbon::parse($listing['expiry_date']));
 
 				// Polite Warning.
 				if ($daysRemaining <= 5) {

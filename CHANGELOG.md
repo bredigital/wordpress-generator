@@ -4,6 +4,10 @@ Adheres to [Keep a Changelog][KC], and [Semantic Versioning][SV].
 This has been migrated from Subversion to Git(Hub). Versions prior to 1.0b are
 no longer available.
 
+## Unreleased
+### Fixed
+- Expiry calculation handled incorrectly (#19).
+
 ## [1.3b] - 2020-07-16
 ### Added
 - Ability to import a site in an archive (#22).

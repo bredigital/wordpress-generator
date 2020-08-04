@@ -16,13 +16,12 @@ class Controls
 	/**
 	 * Returns how many days are remaining between today and the provided date.
 	 *
-	 * @var Carbon $startDate The created date.
-	 * @var Carbon $endDate   The expiry date.
+	 * @var Carbon $endDate The expiry date.
 	 * @return Integer Value between 0 and the specified days.
 	 */
-	public function daysRemaining(Carbon $startDate, Carbon $endDate):int
+	public function daysRemaining(Carbon $endDate):int
 	{
-		return $startDate->diffInDays($endDate, false);
+		return Carbon::now()->diffInDays($endDate, false);
 	}
 
 	/**
