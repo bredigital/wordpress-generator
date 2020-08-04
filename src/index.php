@@ -65,8 +65,13 @@ if ($control === null) {
 			} else {
 				$name   = ( !empty($_GET['name']) ) ? $_GET['name'] : null;
 				$result = $create->newSandbox($email, $name, (!empty($wpVersion)) ? $wpVersion : $version);
+
 				if (isset($result)) {
-					header('Location: ' . $result);
+					if ($result['email_sent']) {
+						header('Location: ' . $result['url'] . '/wp-admin');
+					} else {
+						echo $result['html'];
+					}
 				} else {
 					wpgen_die('An error has occurred in your request. Please see the system log for more details.');
 				}
@@ -76,7 +81,11 @@ if ($control === null) {
 			$import = $di->get(TWPG\Controls\Import::class);
 			$result = $import->import($email, $_FILES['archive']);
 			if (isset($result)) {
-				header('Location: ' . $result);
+				if ($result['email_sent']) {
+					header('Location: ' . $result['url'] . '/wp-admin');
+				} else {
+					echo $result['html'];
+				}
 			} else {
 				wpgen_die('An error has occurred in your request. Please see the system log for more details.');
 			}

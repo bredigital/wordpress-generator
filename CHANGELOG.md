@@ -5,6 +5,9 @@ This has been migrated from Subversion to Git(Hub). Versions prior to 1.0b are
 no longer available.
 
 ## Unreleased
+### Added
+- Created/imported sites where email is disabled/faulty will recieve a page with login details (#13).
+
 ### Fixed
 - Expiry calculation handled incorrectly (#19).
 

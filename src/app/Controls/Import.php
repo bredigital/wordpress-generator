@@ -64,7 +64,7 @@ class Import extends Controls
 	 * @param string      $file
 	 * @return string|null URL of the new site admin panel.
 	 */
-	public function import(string $email, array $file):?string
+	public function import(string $email, array $file):?array
 	{
 		$filename = $file["name"];
 		$cacheDir = $this->cacheDir;
@@ -120,27 +120,29 @@ class Import extends Controls
 		$this->log->info('Copying in generator plugin.');
 		$this->fs->copy("{$this->config->directories->assets}/generator.php", "{$id_dir}/wp-content/mu-plugins/generator.php");
 
-		$this->log->info('Process finished.');
-
-		// Let the site owner know their details.
-		$this->mail->sendEmailToSiteOwner(
-			(int) $id,
-			"Site '{$setup['name']}' Has Been imported",
-			$this->view->render(
-				'Mail/create',
-				[
-					'url'      => $site_url,
-					'username' => $setup['username'],
-					'password' => $setup['password'],
-				],
-				true
-			)
-		);
-
 		// Cleanup.
+		$this->log->info('Cleaning up import resources.');
 		$this->fs->remove($cacheDir . "/process-{$id}");
 
-		return "{$site_url}/wp-admin";
+		$this->log->info('Process finished.');
+
+		$details = [
+			'url'      => $site_url,
+			'username' => $setup['username'],
+			'password' => $setup['password'],
+		];
+		$details['html'] = $this->view->render('MailOff/login_details', $details, true);
+
+		// Let the site owner know their details.
+		$success = $this->mail->sendEmailToSiteOwner(
+			(int) $id,
+			"Site '{$setup['name']}' Has Been imported",
+			$this->view->render('Mail/create', $details, true)
+		);
+
+		$details['email_sent'] = $success;
+
+		return $details;
 	}
 
 	/**

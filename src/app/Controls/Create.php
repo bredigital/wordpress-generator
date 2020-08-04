@@ -57,9 +57,9 @@ class Create extends Controls
 	 * @param string      $email   Admin email and contact by the system.
 	 * @param string      $name    Site alias.
 	 * @param string|null $version Specific version of WordPress, if desired.
-	 * @return string|null URL of the new site admin panel.
+	 * @return array|null Login details of the newly created site.
 	 */
-	public function newSandbox(string $email, ?string $name = null, ?string $version = null):?string
+	public function newSandbox(string $email, ?string $name = null, ?string $version = null):?array
 	{
 		$id      = $this->sitelog->create($name, $_SERVER['REMOTE_ADDR'], isset($_SERVER['HTTPS']));
 		$version = ( isset($version) ) ? $version : 'latest';
@@ -112,22 +112,23 @@ class Create extends Controls
 
 		$this->log->info('Process finished.');
 
+		$details = [
+			'url'      => $site_url,
+			'username' => $account['username'],
+			'password' => $account['password'],
+		];
+		$details['html'] = $this->view->render('MailOff/login_details', $details, true);
+
 		// Let the site owner know their details.
-		$this->mail->sendEmailToSiteOwner(
+		$success = $this->mail->sendEmailToSiteOwner(
 			(int) $id,
 			"Site '{$site_name}' Has Been Created",
-			$this->view->render(
-				'Mail/create',
-				[
-					'url'      => $site_url,
-					'username' => $account['username'],
-					'password' => $account['password'],
-				],
-				true
-			)
+			$this->view->render('Mail/create', $details, true)
 		);
 
-		return "{$site_url}/wp-admin";
+		$details['email_sent'] = $success;
+
+		return $details;
 	}
 
 	/**
