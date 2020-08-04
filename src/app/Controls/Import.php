@@ -156,7 +156,8 @@ class Import extends Controls
 	 * @param string  $siteUrl       The URL the new site will use.
 	 * @return array 'name' of the site, 'username' and 'password' of the controlling/admin user.
 	 */
-	private function processArchive($type, $id, $siteConfigLoc, $siteDBLoc, $email, $siteUrl) {
+	private function processArchive($type, $id, $siteConfigLoc, $siteDBLoc, $email, $siteUrl)
+	{
 		$config = $this->loadArchiveConfig($type, $siteConfigLoc);
 		$idDir  = "{$this->config->directories->sites}/{$id}";
 
