@@ -25,20 +25,21 @@ use TWPG\Services\Configuration;
  */
 function wpgen_die(string $message):void
 {
+	$config = new Configuration();
 	(new DI\Container())->get(ViewRender::class)->render(
 		'error',
 		[
 			'page_title' => 'System error',
 			'message'    => $message,
-			'return_url' => (new Configuration())->general->domain,
-			'log_url'    => (new Configuration())->general->domain . '/index.php?control=log',
+			'return_url' => $config->general->domain,
+			'log_url'    => $config->general->domain . '/index.php?control=log',
 		]
 	);
 	die();
 }
 
-$di       = new DI\Container();
-$config   = new Configuration();
+$di     = new DI\Container();
+$config = new Configuration();
 $di->get(TWPG\Models\Models::class)->doIExist('wpmgr_sitelog');
 
 if ($config->general->debug) {
@@ -55,31 +56,19 @@ if ($control === null) {
 } else {
 	switch ($control) {
 		case 'create':
-		case 'extend':
-			$version   = ( !empty($_GET['v']) ) ? $_GET['v'] : null;
-			$wpVersion = ( $version === 'other' ) ? $_GET['vnum'] : null;
-			$version   = ( $version === 'other' ) ? null : $version;
-			$create    = $di->get(TWPG\Controls\Create::class);
-			if ($control === 'extend') {
-				$create->extend($id);
-			} else {
-				$name   = ( !empty($_GET['name']) ) ? $_GET['name'] : null;
-				$result = $create->newSandbox($email, $name, (!empty($wpVersion)) ? $wpVersion : $version);
-
-				if (isset($result)) {
-					if ($result['email_sent']) {
-						header('Location: ' . $result['url'] . '/wp-admin');
-					} else {
-						echo $result['html'];
-					}
-				} else {
-					wpgen_die('An error has occurred in your request. Please see the system log for more details.');
-				}
-			}
-			break;
 		case 'create_import':
-			$import = $di->get(TWPG\Controls\Import::class);
-			$result = $import->import($email, $_FILES['archive']);
+			if ($control === 'create') {
+				$version   = ( !empty($_GET['v']) ) ? $_GET['v'] : null;
+				$wpVersion = ( $version === 'other' ) ? $_GET['vnum'] : null;
+				$version   = ( $version === 'other' ) ? null : $version;
+				$create    = $di->get(TWPG\Controls\Create::class);
+				$name      = ( !empty($_GET['name']) ) ? $_GET['name'] : null;
+				$result    = $create->newSandbox($email, $name, (!empty($wpVersion)) ? $wpVersion : $version);
+			} else {
+				$import = $di->get(TWPG\Controls\Import::class);
+				$result = $import->import($email, $_FILES['archive']);
+			}
+
 			if (isset($result)) {
 				if ($result['email_sent']) {
 					header('Location: ' . $result['url'] . '/wp-admin');
@@ -89,6 +78,9 @@ if ($control === null) {
 			} else {
 				wpgen_die('An error has occurred in your request. Please see the system log for more details.');
 			}
+			break;
+		case 'extend':
+			$di->get(TWPG\Controls\Create::class)->extend($id);
 			break;
 		case 'delete':
 			$di->get(TWPG\Controls\Delete::class)->deleteSite($id);
