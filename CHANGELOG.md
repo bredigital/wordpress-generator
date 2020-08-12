@@ -4,7 +4,7 @@ Adheres to [Keep a Changelog][KC], and [Semantic Versioning][SV].
 This has been migrated from Subversion to Git(Hub). Versions prior to 1.0b are
 no longer available.
 
-## Unreleased
+## [1.3.1b] - 2020-08-12
 ### Added
 - Created/imported sites where email is disabled/faulty will recieve a page with login details (#13).
 
@@ -80,9 +80,10 @@ no longer available.
 ### Removed
 - WordPress favicon removed.
 
-[KC]:   https://keepachangelog.com/en/1.0.0/
-[SV]:   https://semver.org/spec/v2.0.0.html
-[1.0b]: https://github.com/bredigital/wordpress-generator/releases/tag/1.0b
-[1.1b]: https://github.com/bredigital/wordpress-generator/releases/tag/1.1b
-[1.2b]: https://github.com/bredigital/wordpress-generator/releases/tag/1.2b
-[1.3b]: https://github.com/bredigital/wordpress-generator/releases/tag/1.3b
+[KC]:     https://keepachangelog.com/en/1.0.0/
+[SV]:     https://semver.org/spec/v2.0.0.html
+[1.0b]:   https://github.com/bredigital/wordpress-generator/releases/tag/1.0b
+[1.1b]:   https://github.com/bredigital/wordpress-generator/releases/tag/1.1b
+[1.2b]:   https://github.com/bredigital/wordpress-generator/releases/tag/1.2b
+[1.3b]:   https://github.com/bredigital/wordpress-generator/releases/tag/1.3b
+[1.3.1b]: https://github.com/bredigital/wordpress-generator/releases/tag/1.3.1b
