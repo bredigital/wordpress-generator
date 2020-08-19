@@ -1,4 +1,6 @@
-sites/*
+sites/[0-99]/
+sites/[0-99][0-99]/
+sites/[0-99][0-99][0-99]/
 vendor/
 node_modules/
 cache/*
