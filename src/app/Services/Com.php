@@ -21,15 +21,15 @@ class Com
 	protected $config;
 	protected $log;
 
-	protected $wp;
-	protected $path;
-	protected $url;
+	private $wp;
+	private $path;
+	private $url;
 	public function __construct(Configuration $config, SystemLog $log)
 	{
 		$this->config = $config;
 		$this->log    = $log;
 
-		$this->wp = ( $this->config->general->system_wp ) ? $this->config->general->custom_wp_path : realpath($this->config->directories->rootpath . '/vendor/wp-cli/wp-cli/bin/wp');
+		$this->wp = $this->config->general->wp_path;
 	}
 
 	/**

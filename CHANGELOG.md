@@ -4,6 +4,10 @@ Adheres to [Keep a Changelog][KC], and [Semantic Versioning][SV].
 This has been migrated from Subversion to Git(Hub). Versions prior to 1.0b are
 no longer available.
 
+## Unreleased
+### Removed
+- In-built WP-CLI removed in favour of using the system variant (#12).
+
 ## [1.3.1b] - 2020-08-12
 ### Added
 - Created/imported sites where email is disabled/faulty will recieve a page with login details (#13).
