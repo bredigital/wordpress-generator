@@ -8,6 +8,8 @@ RUN useradd -m -u $UID -g $GID -o -s /bin/bash $UNAME
 ENV APACHE_RUN_USER=$UNAME
 ENV APACHE_RUN_GROUP=$UNAME
 
+RUN cp /etc/apache2/mods-available/rewrite.load /etc/apache2/mods-enabled/
+
 RUN apt-get update && apt-get install -y zlib1g-dev libzip-dev mariadb-client less \
 	&& docker-php-ext-install mysqli pdo_mysql zip
 
