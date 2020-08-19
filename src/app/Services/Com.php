@@ -61,6 +61,7 @@ class Com
 	/**
 	 * Runs the CLI process of downloading the desired version of WordPress.
 	 *
+	 * @link https://developer.wordpress.org/cli/commands/core/download/
 	 * @param string $version Desired version of WordPress. 'latest' (default), 'nightly' and a specific version supported.
 	 * @return void
 	 */
@@ -73,6 +74,7 @@ class Com
 	/**
 	 * Sets the input user as admin.
 	 *
+	 * @link https://developer.wordpress.org/cli/commands/user/set-role/
 	 * @param string $user User identifier.
 	 * @return void
 	 */
@@ -85,6 +87,7 @@ class Com
 	/**
 	 * Find-replace mapper.
 	 *
+	 * @link https://developer.wordpress.org/cli/commands/search-replace/
 	 * @param string $find    The string to find in the DB...
 	 * @param string $replace ...and what to replace it with.
 	 * @return void
@@ -99,6 +102,7 @@ class Com
 	/**
 	 * Creates the wp-config file with generator settings.
 	 *
+	 * @link https://developer.wordpress.org/cli/commands/config/create/
 	 * @param string $id Used for the prefix, generally matches the site URL.
 	 * @return void
 	 */
@@ -130,6 +134,7 @@ class Com
 	/**
 	 * Sets the input array as additional configuration items in wp-config.php. MUST BE CREATED FIRST.
 	 *
+	 * @link https://developer.wordpress.org/cli/commands/config/set/
 	 * @param array $configs Array key will be the config name, and value will match.
 	 * @return void
 	 */
@@ -146,6 +151,7 @@ class Com
 	/**
 	 * Adds options in the array as entries in the wp-options table.
 	 *
+	 * @link https://developer.wordpress.org/cli/commands/option/update/
 	 * @param array $configs Array key will be the config key, and value will match.
 	 * @return void
 	 */
@@ -160,9 +166,21 @@ class Com
 	}
 
 	/**
+	 * Reset the default user roles.
+	 *
+	 * @link https://developer.wordpress.org/cli/commands/role/reset/
+	 * @return void
+	 */
+	public function resetRoles():void
+	{
+		$this->wpcliCall('role reset --all');
+	}
+
+	/**
 	 * Tells WordPress the configuration elements, then completes the '5 minute install' automagically.
 	 * set_url must be set.
 	 *
+	 * @link https://developer.wordpress.org/cli/commands/core/install/
 	 * @param string      $title    WordPress site title.
 	 * @param string      $email    Administrative user email (no email is sent in this step).
 	 * @param string|null $username Different username from 'admin' if desired.
@@ -199,6 +217,7 @@ class Com
 	/**
 	 * Generates a database export for the specified site.
 	 *
+	 * @link https://developer.wordpress.org/cli/commands/db/ Combination of 'tables' and 'export'.
 	 * @param string $dloc ???
 	 * @return void
 	 */
@@ -212,6 +231,7 @@ class Com
 	/**
 	 * Imports a database file into the Generator.
 	 *
+	 * @link https://developer.wordpress.org/cli/commands/db/import/
 	 * @param string $sqlFile A filesystem location to import.
 	 * @return void
 	 */
