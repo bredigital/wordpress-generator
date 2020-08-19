@@ -5,6 +5,9 @@ This has been migrated from Subversion to Git(Hub). Versions prior to 1.0b are
 no longer available.
 
 ## Unreleased
+### Fixed
+- Long Duplicator package names stop exceeding the box length in Import upload.
+
 ### Removed
 - In-built WP-CLI removed in favour of using the system variant (#12).
 
